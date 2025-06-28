@@ -1,0 +1,3691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARK Global Dashboard - AI-Powered Investment Platform</title>
+    <meta name="description"
+        content="Manage your investments and explore global companies with guaranteed returns powered by AI">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #1E3A8A;
+            --primary-white: #FFFFFF;
+            --accent-teal: #26A69A;
+            --light-gray: #F8FAFC;
+            --medium-gray: #64748B;
+            --dark-gray: #334155;
+            --border-gray: #E2E8F0;
+            --success-green: #10B981;
+            --warning-orange: #F59E0B;
+            --error-red: #EF4444;
+            --purple: #8B5CF6;
+            --indigo: #6366F1;
+            --light-blue: #EFF6FF;
+            --dark-blue: #1E40AF;
+            --ai-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --ai-purple: #7C3AED;
+            --ai-pink: #EC4899;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-gray);
+            background: var(--light-gray);
+            overflow-x: hidden;
+            font-weight: 400;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--primary-white);
+            border-bottom: 1px solid var(--border-gray);
+            padding: 12px 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--ai-gradient);
+            border-radius: 6px;
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-white);
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 20px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border: 2px solid var(--border-gray);
+            border-radius: 25px;
+            font-size: 14px;
+            background: var(--light-gray);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            background: var(--primary-white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--medium-gray);
+            font-size: 14px;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--primary-white);
+            border: 1px solid var(--border-gray);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1001;
+            display: none;
+        }
+
+        .search-result-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-gray);
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-result-item:hover {
+            background: var(--light-gray);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-logo {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-blue);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-white);
+            font-weight: 700;
+            font-size: 12px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .search-result-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 2px;
+        }
+
+        .search-result-info p {
+            font-size: 12px;
+            color: var(--medium-gray);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ai-assistant-btn {
+            background: var(--ai-gradient);
+            border: none;
+            color: var(--primary-white);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 20px;
+            transition: all 0.2s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ai-assistant-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: var(--medium-gray);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .notification-btn:hover {
+            background: var(--light-gray);
+            color: var(--primary-blue);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: var(--error-red);
+            color: var(--primary-white);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-white);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Welcome Message */
+        .welcome-message {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: var(--success-green);
+            color: var(--primary-white);
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            z-index: 2000;
+            max-width: 300px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .welcome-message.show {
+            transform: translateX(0);
+        }
+
+        .welcome-message h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .welcome-message p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 20px 0;
+        }
+
+        /* AI Market Insights */
+        .ai-insights {
+            background: var(--ai-gradient);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            color: var(--primary-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-insights::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .ai-insights-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-insights-title {
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .ai-insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-insight-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ai-insight-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .ai-insight-value {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .ai-confidence {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+        }
+
+        .confidence-bar {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: var(--primary-white);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* Dashboard Stats */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--primary-white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-gray);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card.ai-enhanced::after {
+            content: 'AI';
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--ai-gradient);
+            color: var(--primary-white);
+            font-size: 8px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: var(--medium-gray);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--primary-white);
+        }
+
+        .stat-icon.portfolio {
+            background: var(--primary-blue);
+        }
+
+        .stat-icon.profit {
+            background: var(--success-green);
+        }
+
+        .stat-icon.active {
+            background: var(--warning-orange);
+        }
+
+        .stat-icon.matured {
+            background: var(--purple);
+        }
+
+        .stat-icon.ai {
+            background: var(--ai-gradient);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--dark-gray);
+            margin-bottom: 4px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-change.positive {
+            color: var(--success-green);
+        }
+
+        .stat-change.negative {
+            color: var(--error-red);
+        }
+
+        .ai-prediction {
+            font-size: 11px;
+            color: var(--ai-purple);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* AI Analytics Dashboard */
+        .ai-analytics {
+            background: var(--primary-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-gray);
+        }
+
+        .analytics-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .analytics-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chart-tab {
+            padding: 8px 16px;
+            border: 1px solid var(--border-gray);
+            border-radius: 20px;
+            background: var(--primary-white);
+            color: var(--medium-gray);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chart-tab.active {
+            background: var(--ai-gradient);
+            color: var(--primary-white);
+            border-color: transparent;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-bottom: 16px;
+        }
+
+        .chart-insights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .chart-insight {
+            text-align: center;
+            padding: 12px;
+            background: var(--light-gray);
+            border-radius: 8px;
+        }
+
+        .chart-insight-label {
+            font-size: 11px;
+            color: var(--medium-gray);
+            margin-bottom: 4px;
+        }
+
+        .chart-insight-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* AI Suggestions */
+        .ai-suggestions {
+            background: var(--primary-white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-gray);
+        }
+
+        .suggestions-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .suggestions-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .suggestions-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--light-gray);
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .suggestion-item:hover {
+            background: var(--light-blue);
+        }
+
+        .suggestion-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--primary-white);
+        }
+
+        .suggestion-icon.buy {
+            background: var(--success-green);
+        }
+
+        .suggestion-icon.sell {
+            background: var(--error-red);
+        }
+
+        .suggestion-icon.hold {
+            background: var(--warning-orange);
+        }
+
+        .suggestion-content {
+            flex: 1;
+        }
+
+        .suggestion-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 4px;
+        }
+
+        .suggestion-description {
+            font-size: 12px;
+            color: var(--medium-gray);
+        }
+
+        .suggestion-priority {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .suggestion-priority.high {
+            background: var(--error-red);
+            color: var(--primary-white);
+        }
+
+        .suggestion-priority.medium {
+            background: var(--warning-orange);
+            color: var(--primary-white);
+        }
+
+        .suggestion-priority.low {
+            background: var(--medium-gray);
+            color: var(--primary-white);
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .view-all-btn {
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .view-all-btn:hover {
+            background: var(--light-blue);
+        }
+
+        /* Company Grid */
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .company-card {
+            background: var(--primary-white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-gray);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .company-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .ai-score-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--ai-gradient);
+            color: var(--primary-white);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ai-recommendation {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .ai-recommendation.strong-buy {
+            background: var(--success-green);
+            color: var(--primary-white);
+        }
+
+        .ai-recommendation.buy {
+            background: var(--accent-teal);
+            color: var(--primary-white);
+        }
+
+        .ai-recommendation.hold {
+            background: var(--warning-orange);
+            color: var(--primary-white);
+        }
+
+        .company-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            margin-top: 20px;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .company-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-white);
+            font-weight: 700;
+            font-size: 16px;
+            font-family: 'Space Grotesk', sans-serif;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .company-details h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 4px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .company-location {
+            font-size: 12px;
+            color: var(--medium-gray);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .company-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .company-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--medium-gray);
+        }
+
+        .investment-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .investment-detail {
+            text-align: center;
+            padding: 12px;
+            background: var(--light-gray);
+            border-radius: 8px;
+        }
+
+        .investment-detail-label {
+            font-size: 11px;
+            color: var(--medium-gray);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .investment-detail-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .investment-detail-value.profit {
+            color: var(--success-green);
+        }
+
+        .ai-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .ai-metric {
+            text-align: center;
+            padding: 8px;
+            background: rgba(124, 58, 237, 0.1);
+            border-radius: 6px;
+        }
+
+        .ai-metric-label {
+            font-size: 10px;
+            color: var(--ai-purple);
+            margin-bottom: 2px;
+            font-weight: 500;
+        }
+
+        .ai-metric-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--ai-purple);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border-gray);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-teal));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 11px;
+            color: var(--medium-gray);
+            text-align: center;
+        }
+
+        .company-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: var(--primary-white);
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: var(--dark-blue);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+            flex: 1;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-blue);
+            color: var(--primary-white);
+        }
+
+        /* Company Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--primary-white);
+            margin: 2% auto;
+            border-radius: 16px;
+            width: 95%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-2xl);
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-gray);
+            position: sticky;
+            top: 0;
+            background: var(--primary-white);
+            border-radius: 16px 16px 0 0;
+            z-index: 10;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--medium-gray);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--light-gray);
+            color: var(--dark-gray);
+        }
+
+        .company-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .company-modal-logo {
+            width: 64px;
+            height: 64px;
+            background: var(--primary-blue);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-white);
+            font-weight: 700;
+            font-size: 24px;
+            font-family: 'Space Grotesk', sans-serif;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .company-modal-info h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--dark-gray);
+            margin-bottom: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .company-modal-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .company-modal-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--medium-gray);
+            font-size: 14px;
+        }
+
+        .company-social-stats {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .social-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--medium-gray);
+        }
+
+        .social-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .social-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-gray);
+            border-radius: 6px;
+            background: var(--primary-white);
+            color: var(--medium-gray);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .social-btn.liked {
+            background: var(--error-red);
+            color: var(--primary-white);
+            border-color: var(--error-red);
+        }
+
+        .social-btn.following {
+            background: var(--primary-blue);
+            color: var(--primary-white);
+            border-color: var(--primary-blue);
+        }
+
+        .social-btn:hover:not(.liked):not(.following) {
+            background: var(--light-gray);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-gray);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .modal-tab {
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--medium-gray);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .modal-tab.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* AI Analysis Tab */
+        .ai-analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .ai-analysis-card {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .ai-analysis-score {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--ai-purple);
+            margin-bottom: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .ai-analysis-label {
+            font-size: 12px;
+            color: var(--medium-gray);
+            margin-bottom: 8px;
+        }
+
+        .ai-analysis-description {
+            font-size: 11px;
+            color: var(--dark-gray);
+            line-height: 1.4;
+        }
+
+        /* Investment Calculator */
+        .calculator-section {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .calculator-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 16px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .calculator-form {
+            display: grid;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .form-input {
+            padding: 12px;
+            border: 2px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .calculator-result {
+            background: var(--primary-white);
+            border-radius: 8px;
+            padding: 16px;
+            border: 2px solid var(--success-green);
+        }
+
+        .result-title {
+            font-size: 14px;
+            color: var(--medium-gray);
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--success-green);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .result-breakdown {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-gray);
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .breakdown-label {
+            color: var(--medium-gray);
+        }
+
+        .breakdown-value {
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        /* Company Info Sections */
+        .info-section {
+            margin-bottom: 24px;
+        }
+
+        .info-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .info-content {
+            color: var(--medium-gray);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .info-item {
+            background: var(--light-gray);
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .info-item-label {
+            font-size: 12px;
+            color: var(--medium-gray);
+            margin-bottom: 4px;
+        }
+
+        .info-item-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* AI Assistant Modal */
+        .ai-assistant-modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .ai-assistant-content {
+            background: var(--primary-white);
+            margin: 5% auto;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-2xl);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-assistant-header {
+            background: var(--ai-gradient);
+            color: var(--primary-white);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-assistant-title {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-assistant-close {
+            background: none;
+            border: none;
+            color: var(--primary-white);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .ai-assistant-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .ai-chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .ai-chat-message {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .ai-chat-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .ai-chat-avatar.ai {
+            background: var(--ai-gradient);
+            color: var(--primary-white);
+        }
+
+        .ai-chat-avatar.user {
+            background: var(--accent-teal);
+            color: var(--primary-white);
+        }
+
+        .ai-chat-bubble {
+            background: var(--light-gray);
+            padding: 12px 16px;
+            border-radius: 16px;
+            max-width: 80%;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .ai-chat-bubble.ai {
+            background: var(--light-gray);
+        }
+
+        .ai-chat-bubble.user {
+            background: var(--primary-blue);
+            color: var(--primary-white);
+            margin-left: auto;
+        }
+
+        .ai-chat-input-container {
+            padding: 20px;
+            border-top: 1px solid var(--border-gray);
+            display: flex;
+            gap: 12px;
+        }
+
+        .ai-chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border-gray);
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .ai-chat-input:focus {
+            border-color: var(--primary-blue);
+        }
+
+        .ai-chat-send {
+            background: var(--ai-gradient);
+            border: none;
+            color: var(--primary-white);
+            padding: 12px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .ai-chat-send:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Mobile Bottom Navigation */
+        .mobile-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--primary-white);
+            border-top: 1px solid var(--border-gray);
+            padding: 8px 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: var(--medium-gray);
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            min-width: 60px;
+        }
+
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: var(--primary-blue);
+            background: rgba(30, 58, 138, 0.1);
+        }
+
+        .mobile-nav-item i {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .mobile-nav-item span {
+            font-size: 10px;
+            font-weight: 500;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 8px 0;
+            }
+
+            .nav {
+                padding: 0 12px;
+            }
+
+            .logo {
+                font-size: 16px;
+            }
+
+            .logo-icon {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
+            }
+
+            .search-container {
+                margin: 0 12px;
+                max-width: none;
+            }
+
+            .search-input {
+                padding: 8px 12px 8px 32px;
+                font-size: 13px;
+            }
+
+            .ai-assistant-btn {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
+            .user-menu {
+                gap: 8px;
+            }
+
+            .user-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+
+            .main-content {
+                margin-top: 70px;
+                padding: 16px 0;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+
+            .ai-insights {
+                padding: 16px;
+            }
+
+            .ai-insights-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .ai-analytics,
+            .ai-suggestions {
+                padding: 16px;
+            }
+
+            .chart-tabs {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .chart-tab {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+
+            .companies-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .company-card {
+                padding: 16px;
+            }
+
+            .company-logo {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+
+            .company-details h3 {
+                font-size: 14px;
+            }
+
+            .investment-info {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .modal-content {
+                width: 98%;
+                margin: 1% auto;
+                max-height: 95vh;
+            }
+
+            .modal-header {
+                padding: 16px;
+            }
+
+            .modal-body {
+                padding: 16px;
+            }
+
+            .company-modal-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .company-modal-logo {
+                width: 56px;
+                height: 56px;
+                font-size: 20px;
+            }
+
+            .company-modal-info h2 {
+                font-size: 20px;
+            }
+
+            .company-modal-meta {
+                justify-content: center;
+            }
+
+            .calculator-form {
+                gap: 12px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .modal-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .modal-tab {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .welcome-message {
+                top: 70px;
+                right: 10px;
+                max-width: 250px;
+                padding: 12px 16px;
+            }
+
+            .ai-assistant-content {
+                width: 95%;
+                margin: 2% auto;
+            }
+
+            .ai-assistant-header {
+                padding: 16px;
+            }
+
+            .ai-chat-container {
+                padding: 16px;
+            }
+
+            .ai-chat-input-container {
+                padding: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .company-actions {
+                flex-direction: column;
+            }
+
+            .social-actions {
+                flex-wrap: wrap;
+            }
+
+            .social-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .suggestions-grid .suggestion-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .ai-analysis-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .ai-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .modal-content::-webkit-scrollbar,
+        .search-results::-webkit-scrollbar,
+        .ai-chat-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-track,
+        .search-results::-webkit-scrollbar-track,
+        .ai-chat-container::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+
+        .modal-content::-webkit-scrollbar-thumb,
+        .search-results::-webkit-scrollbar-thumb,
+        .ai-chat-container::-webkit-scrollbar-thumb {
+            background: var(--border-gray);
+            border-radius: 2px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover,
+        .search-results::-webkit-scrollbar-thumb:hover,
+        .ai-chat-container::-webkit-scrollbar-thumb:hover {
+            background: var(--medium-gray);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Welcome Message -->
+    <div id="welcomeMessage" class="welcome-message">
+        <h4>Welcome back!</h4>
+        <p id="welcomeText">Great to see you again!</p>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="#" class="logo">
+                <div class="logo-icon">A</div>
+                ARK Global
+            </a>
+
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search companies, sectors, locations..."
+                    id="searchInput">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+
+            <div class="user-menu">
+                <button class="ai-assistant-btn" onclick="openAIAssistant()">
+                    <i class="fas fa-robot"></i>
+                    AI Assistant
+                </button>
+                <button class="notification-btn" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">5</span>
+                </button>
+                <div class="user-avatar" id="userAvatar" onclick="showUserMenu()">JD</div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- AI Market Insights -->
+            <div class="ai-insights">
+                <div class="ai-insights-header">
+                    <h2 class="ai-insights-title">
+                        <i class="fas fa-brain ai-pulse"></i>
+                        AI Market Insights
+                        <span class="ai-badge">LIVE</span>
+                    </h2>
+                </div>
+                <div class="ai-insights-grid">
+                    <div class="ai-insight-card">
+                        <div class="ai-insight-label">Market Trend</div>
+                        <div class="ai-insight-value">Bullish</div>
+                        <div class="ai-confidence">
+                            <span>92% confidence</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-insight-card">
+                        <div class="ai-insight-label">Best Sector</div>
+                        <div class="ai-insight-value">Technology</div>
+                        <div class="ai-confidence">
+                            <span>87% confidence</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: 87%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-insight-card">
+                        <div class="ai-insight-label">Risk Level</div>
+                        <div class="ai-insight-value">Moderate</div>
+                        <div class="ai-confidence">
+                            <span>78% confidence</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: 78%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-insight-card">
+                        <div class="ai-insight-label">Next 6 Months</div>
+                        <div class="ai-insight-value">+18.5%</div>
+                        <div class="ai-confidence">
+                            <span>84% confidence</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: 84%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Stats -->
+            <div class="dashboard-stats">
+                <div class="stat-card ai-enhanced">
+                    <div class="stat-header">
+                        <span class="stat-title">Total Portfolio</span>
+                        <div class="stat-icon portfolio">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">$12,450</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +8.5% this month
+                    </div>
+                    <div class="ai-prediction">AI predicts +12% next month</div>
+                </div>
+
+                <div class="stat-card ai-enhanced">
+                    <div class="stat-header">
+                        <span class="stat-title">Total Profit</span>
+                        <div class="stat-icon profit">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">$1,245</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +12.3% this month
+                    </div>
+                    <div class="ai-prediction">AI suggests diversification</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Active Investments</span>
+                        <div class="stat-icon active">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">8</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +2 this week
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">AI Score</span>
+                        <div class="stat-icon ai">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">8.7/10</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        Excellent portfolio
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Analytics Dashboard -->
+            <div class="ai-analytics">
+                <div class="analytics-header">
+                    <h2 class="analytics-title">
+                        <i class="fas fa-chart-area"></i>
+                        AI Analytics Dashboard
+                    </h2>
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" onclick="switchChartTab('performance')">Performance</button>
+                        <button class="chart-tab" onclick="switchChartTab('predictions')">AI Predictions</button>
+                        <button class="chart-tab" onclick="switchChartTab('risk')">Risk Analysis</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="analyticsChart"></canvas>
+                </div>
+                <div class="chart-insights">
+                    <div class="chart-insight">
+                        <div class="chart-insight-label">6-Month Forecast</div>
+                        <div class="chart-insight-value">+18.5%</div>
+                    </div>
+                    <div class="chart-insight">
+                        <div class="chart-insight-label">AI Accuracy</div>
+                        <div class="chart-insight-value">94.2%</div>
+                    </div>
+                    <div class="chart-insight">
+                        <div class="chart-insight-label">Risk Score</div>
+                        <div class="chart-insight-value">3.2/10</div>
+                    </div>
+                    <div class="chart-insight">
+                        <div class="chart-insight-label">Volatility</div>
+                        <div class="chart-insight-value">Low</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Investment Suggestions -->
+            <div class="ai-suggestions">
+                <div class="suggestions-header">
+                    <h2 class="suggestions-title">
+                        <i class="fas fa-lightbulb"></i>
+                        AI Investment Suggestions
+                    </h2>
+                </div>
+                <div class="suggestions-grid">
+                    <div class="suggestion-item">
+                        <div class="suggestion-icon buy">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="suggestion-content">
+                            <div class="suggestion-title">Buy Tesla Stock</div>
+                            <div class="suggestion-description">AI predicts 25% growth in next 3 months based on market
+                                trends</div>
+                        </div>
+                        <div class="suggestion-priority high">High</div>
+                    </div>
+                    <div class="suggestion-item">
+                        <div class="suggestion-icon hold">
+                            <i class="fas fa-hand-paper"></i>
+                        </div>
+                        <div class="suggestion-content">
+                            <div class="suggestion-title">Rebalance Portfolio</div>
+                            <div class="suggestion-description">Consider reducing tech exposure and increasing
+                                healthcare allocation</div>
+                        </div>
+                        <div class="suggestion-priority medium">Medium</div>
+                    </div>
+                    <div class="suggestion-item">
+                        <div class="suggestion-icon buy">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="suggestion-content">
+                            <div class="suggestion-title">Diversify into Renewable Energy</div>
+                            <div class="suggestion-description">Vestas Wind shows strong AI confidence score of 9.2/10
+                            </div>
+                        </div>
+                        <div class="suggestion-priority low">Low</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Companies -->
+            <div class="section-header">
+                <h2 class="section-title">AI-Recommended Investment Opportunities</h2>
+                <button class="view-all-btn" onclick="showAllCompanies()">View All 50+ Companies</button>
+            </div>
+
+            <div class="companies-grid" id="companiesGrid">
+                <!-- Companies will be populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Company Detail Modal -->
+    <div id="companyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal('companyModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="company-modal-header">
+                    <div class="company-modal-logo" id="modalCompanyLogo">DG</div>
+                    <div class="company-modal-info">
+                        <h2 id="modalCompanyName">Dangote Group</h2>
+                        <div class="company-modal-meta">
+                            <div class="company-modal-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span id="modalCompanyLocation">Nigeria</span>
+                            </div>
+                            <div class="company-social-stats">
+                                <div class="social-stat">
+                                    <i class="fas fa-heart"></i>
+                                    <span id="modalLikesCount">12.5K</span>
+                                </div>
+                                <div class="social-stat">
+                                    <i class="fas fa-users"></i>
+                                    <span id="modalFollowersCount">8.2K</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="social-actions">
+                            <button class="social-btn" id="likeBtn" onclick="toggleLike()">
+                                <i class="fas fa-heart"></i>
+                                <span>Like</span>
+                            </button>
+                            <button class="social-btn" id="followBtn" onclick="toggleFollow()">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Follow</span>
+                            </button>
+                            <button class="social-btn" onclick="shareCompany()">
+                                <i class="fas fa-share"></i>
+                                <span>Share</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-tabs">
+                    <button class="modal-tab active" onclick="switchTab('overview')">Overview</button>
+                    <button class="modal-tab" onclick="switchTab('ai-analysis')">AI Analysis</button>
+                    <button class="modal-tab" onclick="switchTab('calculator')">Calculator</button>
+                    <button class="modal-tab" onclick="switchTab('details')">Details</button>
+                    <button class="modal-tab" onclick="switchTab('performance')">Performance</button>
+                </div>
+
+                <!-- Overview Tab -->
+                <div class="tab-content active" id="overviewTab">
+                    <div class="info-section">
+                        <h3 class="info-title">Company Overview</h3>
+                        <p class="info-content" id="companyDescription">
+                            Dangote Group is Africa's largest conglomerate with interests in cement, sugar, and oil
+                            refining across 17 countries. The company has been a leader in industrial development across
+                            Africa for over three decades.
+                        </p>
+                    </div>
+
+                    <div class="info-section">
+                        <h3 class="info-title">Investment Terms</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-item-label">Investment Period</div>
+                                <div class="info-item-value" id="investmentPeriod">3 Months</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">Guaranteed Return</div>
+                                <div class="info-item-value" id="guaranteedReturn">15%</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">Minimum Investment</div>
+                                <div class="info-item-value" id="minimumInvestment">$100</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">Maximum Investment</div>
+                                <div class="info-item-value" id="maximumInvestment">$50,000</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Analysis Tab -->
+                <div class="tab-content" id="ai-analysisTab">
+                    <div class="info-section">
+                        <h3 class="info-title">AI Investment Analysis</h3>
+                        <div class="ai-analysis-grid">
+                            <div class="ai-analysis-card">
+                                <div class="ai-analysis-score" id="aiOverallScore">8.7</div>
+                                <div class="ai-analysis-label">Overall AI Score</div>
+                                <div class="ai-analysis-description">Excellent investment opportunity with strong
+                                    fundamentals</div>
+                            </div>
+                            <div class="ai-analysis-card">
+                                <div class="ai-analysis-score" id="aiGrowthScore">9.2</div>
+                                <div class="ai-analysis-label">Growth Potential</div>
+                                <div class="ai-analysis-description">High growth expected based on market analysis</div>
+                            </div>
+                            <div class="ai-analysis-card">
+                                <div class="ai-analysis-score" id="aiRiskScore">3.1</div>
+                                <div class="ai-analysis-label">Risk Level</div>
+                                <div class="ai-analysis-description">Low to moderate risk with stable returns</div>
+                            </div>
+                            <div class="ai-analysis-card">
+                                <div class="ai-analysis-score" id="aiConfidence">94%</div>
+                                <div class="ai-analysis-label">AI Confidence</div>
+                                <div class="ai-analysis-description">Very high confidence in predictions</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h3 class="info-title">Market Sentiment Analysis</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-item-label">Social Media Sentiment</div>
+                                <div class="info-item-value">Positive (78%)</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">News Sentiment</div>
+                                <div class="info-item-value">Very Positive (89%)</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">Analyst Rating</div>
+                                <div class="info-item-value">Strong Buy</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">Price Target</div>
+                                <div class="info-item-value">+22% upside</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculator Tab -->
+                <div class="tab-content" id="calculatorTab">
+                    <div class="calculator-section">
+                        <h3 class="calculator-title">AI-Enhanced Investment Calculator</h3>
+                        <div class="calculator-form">
+                            <div class="form-group">
+                                <label class="form-label">Investment Amount ($)</label>
+                                <input type="number" class="form-input" id="investmentAmount" placeholder="Enter amount"
+                                    min="100" max="50000" oninput="calculateReturns()">
+                            </div>
+                            <div class="calculator-result" id="calculatorResult" style="display: none;">
+                                <div class="result-title">Your Returns After <span id="resultPeriod">3 Months</span>
+                                </div>
+                                <div class="result-value" id="totalReturn">$0</div>
+                                <div class="result-breakdown">
+                                    <div class="breakdown-item">
+                                        <span class="breakdown-label">Initial Investment:</span>
+                                        <span class="breakdown-value" id="initialAmount">$0</span>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <span class="breakdown-label">Guaranteed Profit:</span>
+                                        <span class="breakdown-value" id="profitAmount">$0</span>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <span class="breakdown-label">AI Bonus Prediction:</span>
+                                        <span class="breakdown-value" id="aiBonusAmount">$0</span>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <span class="breakdown-label">Total Return:</span>
+                                        <span class="breakdown-value" id="totalAmount">$0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" style="margin-top: 16px;" onclick="investNow()">
+                                <i class="fas fa-rocket"></i>
+                                Invest Now with AI Insights
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Details Tab -->
+                <div class="tab-content" id="detailsTab">
+                    <div class="info-section">
+                        <h3 class="info-title">Company Information</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-item-label">Founded</div>
+                                <div class="info-item-value" id="companyFounded">1981</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">Employees</div>
+                                <div class="info-item-value" id="companyEmployees">11,000+</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">Revenue</div>
+                                <div class="info-item-value" id="companyRevenue">$4.2B</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">Market Cap</div>
+                                <div class="info-item-value" id="companyMarketCap">$12.8B</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h3 class="info-title">Business Segments</h3>
+                        <p class="info-content" id="businessSegments">
+                            • <strong>Cement:</strong> Africa's largest cement producer with operations in 10
+                            countries<br>
+                            • <strong>Sugar:</strong> Leading sugar refinery with capacity of 1.44 million tonnes<br>
+                            • <strong>Oil & Gas:</strong> Operates Africa's largest oil refinery<br>
+                            • <strong>Fertilizer:</strong> Major producer of urea and other fertilizers
+                        </p>
+                    </div>
+
+                    <div class="info-section">
+                        <h3 class="info-title">Investment Highlights</h3>
+                        <p class="info-content" id="investmentHighlights">
+                            • Dominant market position across multiple African countries<br>
+                            • Strong cash flow generation and dividend history<br>
+                            • Strategic expansion into new markets and products<br>
+                            • Experienced management team with proven track record
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Performance Tab -->
+                <div class="tab-content" id="performanceTab">
+                    <div class="info-section">
+                        <h3 class="info-title">Historical Performance</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-item-label">1 Year Return</div>
+                                <div class="info-item-value">+24.5%</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">3 Year Return</div>
+                                <div class="info-item-value">+68.2%</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">5 Year Return</div>
+                                <div class="info-item-value">+142.8%</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-item-label">Success Rate</div>
+                                <div class="info-item-value">98.5%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h3 class="info-title">Recent Achievements</h3>
+                        <p class="info-content" id="recentAchievements">
+                            • Completed $2.5B oil refinery project in Lagos<br>
+                            • Expanded cement operations to 3 new African countries<br>
+                            • Achieved 15% revenue growth in Q4 2024<br>
+                            • Maintained dividend payments for 12 consecutive years
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Modal -->
+    <div id="aiAssistantModal" class="ai-assistant-modal">
+        <div class="ai-assistant-content">
+            <div class="ai-assistant-header">
+                <h3 class="ai-assistant-title">
+                    <i class="fas fa-robot"></i>
+                    ARK AI Assistant
+                </h3>
+                <button class="ai-assistant-close" onclick="closeAIAssistant()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="ai-chat-container" id="aiChatContainer">
+                <div class="ai-chat-message">
+                    <div class="ai-chat-avatar ai">AI</div>
+                    <div class="ai-chat-bubble ai">
+                        Hello! I'm your AI investment assistant. I can help you analyze investments, predict market
+                        trends, and optimize your portfolio. What would you like to know?
+                    </div>
+                </div>
+            </div>
+            <div class="ai-chat-input-container">
+                <input type="text" class="ai-chat-input" id="aiChatInput"
+                    placeholder="Ask me about investments, market trends, or portfolio optimization..."
+                    onkeypress="handleAIChatKeyPress(event)">
+                <button class="ai-chat-send" onclick="sendAIMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="mobile-nav-container">
+            <a href="#" class="mobile-nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Portfolio</span>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <i class="fas fa-building"></i>
+                <span>Companies</span>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <i class="fas fa-robot"></i>
+                <span>AI Insights</span>
+            </a>
+            <a href="#" class="mobile-nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Enhanced Companies Data with 50+ companies and logos
+        const companies = [
+            // Technology Giants
+            { id: 1, name: "Apple Inc.", logo: "🍎", logoUrl: "https://logo.clearbit.com/apple.com", location: "United States", sector: "Technology", description: "World's most valuable company designing and manufacturing consumer electronics and software.", investmentPeriod: "6 Months", guaranteedReturn: 24, minimumInvestment: 1000, maximumInvestment: 250000, currentProgress: 25, daysLeft: 156, likes: 67800, followers: 58200, founded: 1976, employees: "164,000+", revenue: "$394.3B", marketCap: "$3.1T", whatsapp: "+1-800-APPLE", aiScore: 9.5, aiRecommendation: "strong-buy", growthPotential: 95, riskLevel: 2.1, confidence: 96 },
+
+            { id: 2, name: "Microsoft Corporation", logo: "🪟", logoUrl: "https://logo.clearbit.com/microsoft.com", location: "United States", sector: "Technology", description: "Leading technology company developing computer software, consumer electronics, and cloud services.", investmentPeriod: "5 Months", guaranteedReturn: 21, minimumInvestment: 600, maximumInvestment: 180000, currentProgress: 40, daysLeft: 123, likes: 52300, followers: 44700, founded: 1975, employees: "221,000+", revenue: "$211.9B", marketCap: "$2.8T", whatsapp: "+1-800-MICROSOFT", aiScore: 9.2, aiRecommendation: "strong-buy", growthPotential: 88, riskLevel: 2.3, confidence: 94 },
+
+            { id: 3, name: "Google (Alphabet)", logo: "🔍", logoUrl: "https://logo.clearbit.com/google.com", location: "United States", sector: "Technology", description: "Multinational technology company specializing in Internet-related services and products.", investmentPeriod: "4 Months", guaranteedReturn: 19, minimumInvestment: 500, maximumInvestment: 150000, currentProgress: 55, daysLeft: 98, likes: 48900, followers: 41200, founded: 1998, employees: "190,000+", revenue: "$307.4B", marketCap: "$1.7T", whatsapp: "+1-650-GOOGLE", aiScore: 9.0, aiRecommendation: "strong-buy", growthPotential: 92, riskLevel: 2.5, confidence: 91 },
+
+            { id: 4, name: "Amazon.com Inc.", logo: "📦", logoUrl: "https://logo.clearbit.com/amazon.com", location: "United States", sector: "E-commerce", description: "Global e-commerce and cloud computing giant with operations worldwide.", investmentPeriod: "5 Months", guaranteedReturn: 20, minimumInvestment: 400, maximumInvestment: 120000, currentProgress: 35, daysLeft: 134, likes: 38900, followers: 32400, founded: 1994, employees: "1,540,000+", revenue: "$574.8B", marketCap: "$1.6T", whatsapp: "+1-888-AMAZON", aiScore: 8.8, aiRecommendation: "buy", growthPotential: 85, riskLevel: 3.1, confidence: 89 },
+
+            { id: 5, name: "Tesla Inc.", logo: "⚡", logoUrl: "https://logo.clearbit.com/tesla.com", location: "United States", sector: "Electric Vehicles", description: "Leading electric vehicle and clean energy company revolutionizing transportation.", investmentPeriod: "4 Months", guaranteedReturn: 18, minimumInvestment: 500, maximumInvestment: 100000, currentProgress: 60, daysLeft: 78, likes: 45600, followers: 38900, founded: 2003, employees: "140,000+", revenue: "$96.8B", marketCap: "$789.3B", whatsapp: "+1-888-TESLA", aiScore: 8.5, aiRecommendation: "buy", growthPotential: 90, riskLevel: 4.2, confidence: 82 },
+
+            // Asian Tech Giants
+            { id: 6, name: "Samsung Electronics", logo: "📱", logoUrl: "https://logo.clearbit.com/samsung.com", location: "South Korea", sector: "Technology", description: "Global technology leader in semiconductors, smartphones, and consumer electronics.", investmentPeriod: "5 Months", guaranteedReturn: 20, minimumInvestment: 400, maximumInvestment: 100000, currentProgress: 25, daysLeft: 134, likes: 22100, followers: 18900, founded: 1969, employees: "267,000+", revenue: "$244.2B", marketCap: "$326.4B", whatsapp: "+82-2-SAMSUNG", aiScore: 8.7, aiRecommendation: "buy", growthPotential: 83, riskLevel: 2.8, confidence: 87 },
+
+            { id: 7, name: "Alibaba Group", logo: "🛒", logoUrl: "https://logo.clearbit.com/alibaba.com", location: "China", sector: "E-commerce", description: "Chinese multinational technology company specializing in e-commerce, retail, and technology.", investmentPeriod: "4 Months", guaranteedReturn: 17, minimumInvestment: 300, maximumInvestment: 90000, currentProgress: 70, daysLeft: 56, likes: 19800, followers: 16700, founded: 1999, employees: "245,000+", revenue: "$109.5B", marketCap: "$189.2B", whatsapp: "+86-571-ALIBABA", aiScore: 7.9, aiRecommendation: "hold", growthPotential: 75, riskLevel: 4.5, confidence: 78 },
+
+            { id: 8, name: "Toyota Motor", logo: "🚗", logoUrl: "https://logo.clearbit.com/toyota.com", location: "Japan", sector: "Automotive", description: "World's largest automaker by production volume and market capitalization.", investmentPeriod: "6 Months", guaranteedReturn: 21, minimumInvestment: 500, maximumInvestment: 120000, currentProgress: 30, daysLeft: 167, likes: 25600, followers: 21400, founded: 1937, employees: "366,000+", revenue: "$274.5B", marketCap: "$248.9B", whatsapp: "+81-3-TOYOTA", aiScore: 8.3, aiRecommendation: "buy", growthPotential: 78, riskLevel: 2.9, confidence: 85 },
+
+            // European Leaders
+            { id: 9, name: "ASML Holding", logo: "🔬", logoUrl: "https://logo.clearbit.com/asml.com", location: "Netherlands", sector: "Technology", description: "Leading supplier of photolithography systems for the semiconductor industry.", investmentPeriod: "5 Months", guaranteedReturn: 22, minimumInvestment: 600, maximumInvestment: 150000, currentProgress: 20, daysLeft: 145, likes: 9400, followers: 6800, founded: 1984, employees: "35,000+", revenue: "$21.2B", marketCap: "$285.6B", whatsapp: "+31-40-ASML", aiScore: 9.1, aiRecommendation: "strong-buy", growthPotential: 94, riskLevel: 3.2, confidence: 92 },
+
+            { id: 10, name: "Nestlé S.A.", logo: "🍫", logoUrl: "https://logo.clearbit.com/nestle.com", location: "Switzerland", sector: "Food & Beverages", description: "World's largest food and beverage company with operations in 186 countries.", investmentPeriod: "5 Months", guaranteedReturn: 17, minimumInvestment: 300, maximumInvestment: 85000, currentProgress: 50, daysLeft: 98, likes: 21400, followers: 17800, founded: 1866, employees: "273,000+", revenue: "$103.2B", marketCap: "$312.8B", whatsapp: "+41-21-NESTLE", aiScore: 8.0, aiRecommendation: "buy", growthPotential: 72, riskLevel: 2.1, confidence: 88 },
+
+            { id: 11, name: "LVMH", logo: "👜", logoUrl: "https://logo.clearbit.com/lvmh.com", location: "France", sector: "Luxury Goods", description: "World's largest luxury goods conglomerate with 75+ prestigious brands.", investmentPeriod: "6 Months", guaranteedReturn: 23, minimumInvestment: 800, maximumInvestment: 200000, currentProgress: 15, daysLeft: 165, likes: 28900, followers: 24500, founded: 1987, employees: "200,000+", revenue: "$86.2B", marketCap: "$378.4B", whatsapp: "+33-1-LVMH", aiScore: 8.9, aiRecommendation: "strong-buy", growthPotential: 89, riskLevel: 3.5, confidence: 86 },
+
+            { id: 12, name: "SAP SE", logo: "💼", logoUrl: "https://logo.clearbit.com/sap.com", location: "Germany", sector: "Software", description: "Market leader in enterprise application software, helping companies run better.", investmentPeriod: "5 Months", guaranteedReturn: 18, minimumInvestment: 350, maximumInvestment: 70000, currentProgress: 45, daysLeft: 112, likes: 14600, followers: 10200, founded: 1972, employees: "107,000+", revenue: "$32.9B", marketCap: "$138.2B", whatsapp: "+49-6227-SAP", aiScore: 8.1, aiRecommendation: "buy", growthPotential: 76, riskLevel: 2.7, confidence: 84 },
+
+            // Renewable Energy & Sustainability
+            { id: 13, name: "Vestas Wind Systems", logo: "🌪️", logoUrl: "https://logo.clearbit.com/vestas.com", location: "Denmark", sector: "Renewable Energy", description: "World's leading wind turbine manufacturer with 145+ GW installed globally.", investmentPeriod: "6 Months", guaranteedReturn: 20, minimumInvestment: 300, maximumInvestment: 60000, currentProgress: 30, daysLeft: 150, likes: 11500, followers: 7900, founded: 1945, employees: "29,000+", revenue: "$17.5B", marketCap: "$12.4B", whatsapp: "+45-97-VESTAS", aiScore: 9.2, aiRecommendation: "strong-buy", growthPotential: 96, riskLevel: 3.8, confidence: 91 },
+
+            { id: 14, name: "NextEra Energy", logo: "⚡", logoUrl: "https://logo.clearbit.com/nexteraenergy.com", location: "United States", sector: "Renewable Energy", description: "Leading clean energy company and largest generator of renewable energy from wind and sun.", investmentPeriod: "5 Months", guaranteedReturn: 19, minimumInvestment: 400, maximumInvestment: 80000, currentProgress: 40, daysLeft: 128, likes: 8900, followers: 6200, founded: 1925, employees: "14,000+", revenue: "$20.9B", marketCap: "$156.8B", whatsapp: "+1-561-NEXTERA", aiScore: 8.8, aiRecommendation: "buy", growthPotential: 87, riskLevel: 2.9, confidence: 89 },
+
+            // Financial Services
+            { id: 15, name: "JPMorgan Chase", logo: "🏦", logoUrl: "https://logo.clearbit.com/jpmorganchase.com", location: "United States", sector: "Banking", description: "Largest bank in the United States and a leading global financial services firm.", investmentPeriod: "4 Months", guaranteedReturn: 16, minimumInvestment: 500, maximumInvestment: 100000, currentProgress: 55, daysLeft: 89, likes: 18700, followers: 14200, founded: 1799, employees: "271,000+", revenue: "$128.7B", marketCap: "$486.2B", whatsapp: "+1-212-JPMORGAN", aiScore: 8.2, aiRecommendation: "buy", growthPotential: 74, riskLevel: 2.8, confidence: 86 },
+
+            { id: 16, name: "Visa Inc.", logo: "💳", logoUrl: "https://logo.clearbit.com/visa.com", location: "United States", sector: "Financial Services", description: "Global payments technology company connecting consumers, businesses, banks and governments.", investmentPeriod: "4 Months", guaranteedReturn: 18, minimumInvestment: 400, maximumInvestment: 90000, currentProgress: 45, daysLeft: 102, likes: 16500, followers: 12800, founded: 1958, employees: "26,000+", revenue: "$29.3B", marketCap: "$486.8B", whatsapp: "+1-650-VISA", aiScore: 8.6, aiRecommendation: "buy", growthPotential: 81, riskLevel: 2.4, confidence: 88 },
+
+            // Healthcare & Biotech
+            { id: 17, name: "Johnson & Johnson", logo: "🏥", logoUrl: "https://logo.clearbit.com/jnj.com", location: "United States", sector: "Healthcare", description: "Multinational corporation developing medical devices, pharmaceuticals, and consumer goods.", investmentPeriod: "5 Months", guaranteedReturn: 17, minimumInvestment: 350, maximumInvestment: 75000, currentProgress: 50, daysLeft: 115, likes: 19200, followers: 15600, founded: 1886, employees: "144,000+", revenue: "$94.9B", marketCap: "$445.2B", whatsapp: "+1-732-JNJ", aiScore: 8.4, aiRecommendation: "buy", growthPotential: 79, riskLevel: 2.2, confidence: 87 },
+
+            { id: 18, name: "Novo Nordisk", logo: "💉", logoUrl: "https://logo.clearbit.com/novonordisk.com", location: "Denmark", sector: "Healthcare", description: "Global healthcare company focused on diabetes care and other serious chronic diseases.", investmentPeriod: "6 Months", guaranteedReturn: 19, minimumInvestment: 400, maximumInvestment: 80000, currentProgress: 35, daysLeft: 178, likes: 12900, followers: 8700, founded: 1923, employees: "50,000+", revenue: "$24.3B", marketCap: "$428.5B", whatsapp: "+45-44-NOVO", aiScore: 8.7, aiRecommendation: "buy", growthPotential: 84, riskLevel: 2.6, confidence: 89 },
+
+            // Entertainment & Media
+            { id: 19, name: "Netflix Inc.", logo: "🎬", logoUrl: "https://logo.clearbit.com/netflix.com", location: "United States", sector: "Entertainment", description: "Leading streaming entertainment service with 230+ million paid memberships worldwide.", investmentPeriod: "3 Months", guaranteedReturn: 15, minimumInvestment: 200, maximumInvestment: 50000, currentProgress: 65, daysLeft: 67, likes: 24800, followers: 19500, founded: 1997, employees: "12,000+", revenue: "$31.6B", marketCap: "$196.8B", whatsapp: "+1-408-NETFLIX", aiScore: 7.8, aiRecommendation: "hold", growthPotential: 73, riskLevel: 4.1, confidence: 79 },
+
+            { id: 20, name: "Spotify Technology", logo: "🎵", logoUrl: "https://logo.clearbit.com/spotify.com", location: "Sweden", sector: "Media & Entertainment", description: "World's most popular audio streaming subscription service with 500M+ users.", investmentPeriod: "3 Months", guaranteedReturn: 14, minimumInvestment: 100, maximumInvestment: 35000, currentProgress: 75, daysLeft: 28, likes: 16800, followers: 12400, founded: 2006, employees: "9,000+", revenue: "$13.2B", marketCap: "$25.8B", whatsapp: "+46-8-SPOTIFY", aiScore: 7.6, aiRecommendation: "hold", growthPotential: 71, riskLevel: 4.3, confidence: 76 },
+
+            // E-commerce & Retail
+            { id: 21, name: "Shopify Inc.", logo: "🛍️", logoUrl: "https://logo.clearbit.com/shopify.com", location: "Canada", sector: "E-commerce", description: "E-commerce platform powering 2M+ businesses worldwide with comprehensive solutions.", investmentPeriod: "4 Months", guaranteedReturn: 17, minimumInvestment: 250, maximumInvestment: 60000, currentProgress: 65, daysLeft: 89, likes: 12800, followers: 9200, founded: 2006, employees: "12,000+", revenue: "$7.1B", marketCap: "$78.9B", whatsapp: "+1-888-SHOPIFY", aiScore: 8.3, aiRecommendation: "buy", growthPotential: 82, riskLevel: 3.7, confidence: 83 },
+
+            // Cybersecurity
+            { id: 22, name: "CrowdStrike Holdings", logo: "🛡️", logoUrl: "https://logo.clearbit.com/crowdstrike.com", location: "United States", sector: "Cybersecurity", description: "Leader in cloud-based cybersecurity solutions protecting 29,000+ customers globally.", investmentPeriod: "3 Months", guaranteedReturn: 15, minimumInvestment: 200, maximumInvestment: 50000, currentProgress: 80, daysLeft: 22, likes: 8500, followers: 5900, founded: 2011, employees: "8,000+", revenue: "$3.0B", marketCap: "$78.2B", whatsapp: "+1-888-CROWDSTRIKE", aiScore: 8.9, aiRecommendation: "strong-buy", growthPotential: 91, riskLevel: 3.4, confidence: 88 },
+
+            // African Companies
+            { id: 23, name: "Dangote Group", logo: "🏭", logoUrl: "https://logo.clearbit.com/dangote.com", location: "Nigeria", sector: "Conglomerate", description: "Africa's largest conglomerate with interests in cement, sugar, and oil refining across 17 countries.", investmentPeriod: "3 Months", guaranteedReturn: 15, minimumInvestment: 100, maximumInvestment: 50000, currentProgress: 75, daysLeft: 23, likes: 12500, followers: 8200, founded: 1981, employees: "11,000+", revenue: "$4.2B", marketCap: "$12.8B", whatsapp: "+234-800-DANGOTE", aiScore: 8.1, aiRecommendation: "buy", growthPotential: 85, riskLevel: 3.9, confidence: 81 },
+
+            { id: 24, name: "Safaricom PLC", logo: "📱", logoUrl: "https://logo.clearbit.com/safaricom.co.ke", location: "Kenya", sector: "Telecom", description: "Leading telecommunications provider known for M-Pesa mobile money services.", investmentPeriod: "3 Months", guaranteedReturn: 12, minimumInvestment: 50, maximumInvestment: 25000, currentProgress: 60, daysLeft: 45, likes: 9800, followers: 6500, founded: 1997, employees: "6,000+", revenue: "$2.8B", marketCap: "$8.5B", whatsapp: "+254-700-SAFARI", aiScore: 7.9, aiRecommendation: "buy", growthPotential: 78, riskLevel: 4.2, confidence: 79 },
+
+            // South American Companies
+            { id: 25, name: "Nubank", logo: "💜", logoUrl: "https://logo.clearbit.com/nubank.com.br", location: "Brazil", sector: "Fintech", description: "Digital bank disrupting traditional banking with 90M+ customers across Latin America.", investmentPeriod: "3 Months", guaranteedReturn: 16, minimumInvestment: 100, maximumInvestment: 40000, currentProgress: 70, daysLeft: 34, likes: 15600, followers: 11800, founded: 2013, employees: "5,000+", revenue: "$8.1B", marketCap: "$45.2B", whatsapp: "+55-11-NUBANK", aiScore: 8.2, aiRecommendation: "buy", growthPotential: 86, riskLevel: 4.1, confidence: 82 },
+
+            { id: 26, name: "MercadoLibre", logo: "🛒", logoUrl: "https://logo.clearbit.com/mercadolibre.com", location: "Argentina", sector: "E-commerce", description: "Leading e-commerce and fintech company in Latin America with operations in 18 countries.", investmentPeriod: "4 Months", guaranteedReturn: 17, minimumInvestment: 200, maximumInvestment: 55000, currentProgress: 55, daysLeft: 98, likes: 13400, followers: 9800, founded: 1999, employees: "26,000+", revenue: "$14.5B", marketCap: "$89.7B", whatsapp: "+54-11-MERCADO", aiScore: 8.0, aiRecommendation: "buy", growthPotential: 80, riskLevel: 3.8, confidence: 81 },
+
+            // Additional Tech Companies
+            { id: 27, name: "NVIDIA Corporation", logo: "🎮", logoUrl: "https://logo.clearbit.com/nvidia.com", location: "United States", sector: "Technology", description: "Leading designer of graphics processing units and AI computing platforms.", investmentPeriod: "4 Months", guaranteedReturn: 22, minimumInvestment: 600, maximumInvestment: 150000, currentProgress: 30, daysLeft: 112, likes: 28900, followers: 23400, founded: 1993, employees: "29,000+", revenue: "$60.9B", marketCap: "$1.8T", whatsapp: "+1-408-NVIDIA", aiScore: 9.4, aiRecommendation: "strong-buy", growthPotential: 97, riskLevel: 4.5, confidence: 93 },
+
+            { id: 28, name: "Adobe Inc.", logo: "🎨", logoUrl: "https://logo.clearbit.com/adobe.com", location: "United States", sector: "Software", description: "Multinational computer software company known for creative and digital marketing solutions.", investmentPeriod: "4 Months", guaranteedReturn: 18, minimumInvestment: 350, maximumInvestment: 70000, currentProgress: 45, daysLeft: 98, likes: 14200, followers: 11800, founded: 1982, employees: "28,000+", revenue: "$19.4B", marketCap: "$218.9B", whatsapp: "+1-408-ADOBE", aiScore: 8.5, aiRecommendation: "buy", growthPotential: 83, riskLevel: 2.9, confidence: 86 },
+
+            // More Financial Services
+            { id: 29, name: "PayPal Holdings", logo: "💰", logoUrl: "https://logo.clearbit.com/paypal.com", location: "United States", sector: "Financial Services", description: "Leading digital payments platform serving millions of consumers and merchants globally.", investmentPeriod: "3 Months", guaranteedReturn: 16, minimumInvestment: 200, maximumInvestment: 45000, currentProgress: 60, daysLeft: 67, likes: 18900, followers: 14500, founded: 1998, employees: "30,000+", revenue: "$27.5B", marketCap: "$67.8B", whatsapp: "+1-888-PAYPAL", aiScore: 7.8, aiRecommendation: "hold", growthPotential: 75, riskLevel: 3.6, confidence: 80 },
+
+            { id: 30, name: "Square (Block)", logo: "⬜", logoUrl: "https://logo.clearbit.com/block.xyz", location: "United States", sector: "Financial Services", description: "Financial services and digital payments company empowering businesses and individuals.", investmentPeriod: "3 Months", guaranteedReturn: 15, minimumInvestment: 150, maximumInvestment: 40000, currentProgress: 55, daysLeft: 78, likes: 12600, followers: 9800, founded: 2009, employees: "12,000+", revenue: "$17.7B", marketCap: "$38.9B", whatsapp: "+1-855-SQUARE", aiScore: 7.6, aiRecommendation: "hold", growthPotential: 72, riskLevel: 4.2, confidence: 77 },
+
+            // More Asian Companies
+            { id: 31, name: "Tencent Holdings", logo: "🐧", logoUrl: "https://logo.clearbit.com/tencent.com", location: "China", sector: "Technology", description: "Chinese multinational technology conglomerate specializing in internet services and AI.", investmentPeriod: "4 Months", guaranteedReturn: 18, minimumInvestment: 300, maximumInvestment: 80000, currentProgress: 40, daysLeft: 123, likes: 21500, followers: 17800, founded: 1998, employees: "116,000+", revenue: "$87.4B", marketCap: "$378.2B", whatsapp: "+86-755-TENCENT", aiScore: 8.1, aiRecommendation: "buy", growthPotential: 79, riskLevel: 4.1, confidence: 82 },
+
+            { id: 32, name: "Taiwan Semiconductor", logo: "🔬", logoUrl: "https://logo.clearbit.com/tsmc.com", location: "Taiwan", sector: "Technology", description: "World's largest contract chip manufacturer and semiconductor foundry.", investmentPeriod: "5 Months", guaranteedReturn: 20, minimumInvestment: 500, maximumInvestment: 120000, currentProgress: 35, daysLeft: 145, likes: 16800, followers: 13200, founded: 1987, employees: "75,000+", revenue: "$70.8B", marketCap: "$542.3B", whatsapp: "+886-3-TSMC", aiScore: 9.0, aiRecommendation: "strong-buy", growthPotential: 88, riskLevel: 3.2, confidence: 90 },
+
+            // More European Companies
+            { id: 33, name: "Adyen N.V.", logo: "💳", logoUrl: "https://logo.clearbit.com/adyen.com", location: "Netherlands", sector: "Fintech", description: "Leading payment platform serving global businesses with unified commerce solutions.", investmentPeriod: "4 Months", guaranteedReturn: 16, minimumInvestment: 150, maximumInvestment: 40000, currentProgress: 55, daysLeft: 67, likes: 7200, followers: 4800, founded: 2006, employees: "4,000+", revenue: "$1.0B", marketCap: "$15.8B", whatsapp: "+31-20-ADYEN", aiScore: 8.3, aiRecommendation: "buy", growthPotential: 81, riskLevel: 3.5, confidence: 84 },
+
+            { id: 34, name: "Siemens AG", logo: "⚙️", logoUrl: "https://logo.clearbit.com/siemens.com", location: "Germany", sector: "Industrial", description: "Global technology powerhouse focusing on industry, infrastructure, transport, and healthcare.", investmentPeriod: "5 Months", guaranteedReturn: 17, minimumInvestment: 400, maximumInvestment: 75000, currentProgress: 40, daysLeft: 134, likes: 11900, followers: 8600, founded: 1847, employees: "303,000+", revenue: "$72.0B", marketCap: "$118.4B", whatsapp: "+49-89-SIEMENS", aiScore: 8.0, aiRecommendation: "buy", growthPotential: 76, riskLevel: 2.8, confidence: 85 },
+
+            // More Renewable Energy
+            { id: 35, name: "First Solar Inc.", logo: "☀️", logoUrl: "https://logo.clearbit.com/firstsolar.com", location: "United States", sector: "Renewable Energy", description: "Leading American solar panel manufacturer and provider of utility-scale PV power plants.", investmentPeriod: "4 Months", guaranteedReturn: 19, minimumInvestment: 300, maximumInvestment: 60000, currentProgress: 45, daysLeft: 98, likes: 8700, followers: 6200, founded: 1999, employees: "26,000+", revenue: "$3.2B", marketCap: "$23.8B", whatsapp: "+1-602-FIRSTSOLAR", aiScore: 8.6, aiRecommendation: "buy", growthPotential: 89, riskLevel: 3.9, confidence: 86 },
+
+            // More Healthcare
+            { id: 36, name: "Moderna Inc.", logo: "💉", logoUrl: "https://logo.clearbit.com/modernatx.com", location: "United States", sector: "Biotechnology", description: "Biotechnology company pioneering messenger RNA therapeutics and vaccines.", investmentPeriod: "3 Months", guaranteedReturn: 17, minimumInvestment: 250, maximumInvestment: 55000, currentProgress: 50, daysLeft: 89, likes: 14500, followers: 11200, founded: 2010, employees: "3,900+", revenue: "$18.5B", marketCap: "$42.8B", whatsapp: "+1-617-MODERNA", aiScore: 7.9, aiRecommendation: "buy", growthPotential: 82, riskLevel: 4.8, confidence: 78 },
+
+            // More Automotive
+            { id: 37, name: "BYD Company", logo: "🔋", logoUrl: "https://logo.clearbit.com/byd.com", location: "China", sector: "Electric Vehicles", description: "Chinese multinational manufacturing company specializing in electric vehicles and batteries.", investmentPeriod: "4 Months", guaranteedReturn: 18, minimumInvestment: 200, maximumInvestment: 50000, currentProgress: 65, daysLeft: 78, likes: 16200, followers: 12800, founded: 1995, employees: "290,000+", revenue: "$63.0B", marketCap: "$98.7B", whatsapp: "+86-755-BYD", aiScore: 8.4, aiRecommendation: "buy", growthPotential: 87, riskLevel: 4.1, confidence: 83 },
+
+            // More Mining & Resources
+            { id: 38, name: "BHP Group", logo: "⛏️", logoUrl: "https://logo.clearbit.com/bhp.com", location: "Australia", sector: "Mining", description: "World's largest mining company by market capitalization, leading producer of iron ore and copper.", investmentPeriod: "6 Months", guaranteedReturn: 20, minimumInvestment: 500, maximumInvestment: 100000, currentProgress: 25, daysLeft: 167, likes: 8900, followers: 6200, founded: 1885, employees: "80,000+", revenue: "$65.1B", marketCap: "$128.4B", whatsapp: "+61-3-BHP", aiScore: 7.8, aiRecommendation: "hold", growthPotential: 74, riskLevel: 3.6, confidence: 81 },
+
+            // More Banking
+            { id: 39, name: "HDFC Bank", logo: "🏦", logoUrl: "https://logo.clearbit.com/hdfcbank.com", location: "India", sector: "Banking", description: "India's largest private sector bank by assets and market capitalization.", investmentPeriod: "4 Months", guaranteedReturn: 16, minimumInvestment: 200, maximumInvestment: 45000, currentProgress: 55, daysLeft: 112, likes: 18900, followers: 14600, founded: 1994, employees: "177,000+", revenue: "$15.6B", marketCap: "$157.8B", whatsapp: "+91-22-HDFC", aiScore: 8.2, aiRecommendation: "buy", growthPotential: 78, riskLevel: 3.1, confidence: 84 },
+
+            // More Food & Beverage
+            { id: 40, name: "Coca-Cola Company", logo: "🥤", logoUrl: "https://logo.clearbit.com/coca-cola.com", location: "United States", sector: "Beverages", description: "World's largest beverage company, offering over 500 brands in more than 200 countries.", investmentPeriod: "5 Months", guaranteedReturn: 15, minimumInvestment: 300, maximumInvestment: 60000, currentProgress: 50, daysLeft: 123, likes: 32100, followers: 28900, founded: 1892, employees: "86,200+", revenue: "$43.0B", marketCap: "$268.4B", whatsapp: "+1-404-COCA-COLA", aiScore: 7.5, aiRecommendation: "hold", growthPotential: 68, riskLevel: 2.3, confidence: 83 },
+
+            // More Aerospace
+            { id: 41, name: "Boeing Company", logo: "✈️", logoUrl: "https://logo.clearbit.com/boeing.com", location: "United States", sector: "Aerospace", description: "Leading aerospace company designing, manufacturing and selling airplanes and defense systems.", investmentPeriod: "6 Months", guaranteedReturn: 18, minimumInvestment: 400, maximumInvestment: 80000, currentProgress: 30, daysLeft: 156, likes: 15600, followers: 12300, founded: 1916, employees: "156,000+", revenue: "$66.6B", marketCap: "$108.9B", whatsapp: "+1-312-BOEING", aiScore: 7.3, aiRecommendation: "hold", growthPotential: 71, riskLevel: 4.7, confidence: 75 },
+
+            // More Retail
+            { id: 42, name: "Walmart Inc.", logo: "🛒", logoUrl: "https://logo.clearbit.com/walmart.com", location: "United States", sector: "Retail", description: "World's largest company by revenue, operating hypermarkets, discount stores and grocery stores.", investmentPeriod: "5 Months", guaranteedReturn: 14, minimumInvestment: 250, maximumInvestment: 50000, currentProgress: 60, daysLeft: 98, likes: 24800, followers: 19500, founded: 1962, employees: "2,300,000+", revenue: "$611.3B", marketCap: "$478.9B", whatsapp: "+1-479-WALMART", aiScore: 7.4, aiRecommendation: "hold", growthPotential: 69, riskLevel: 2.5, confidence: 82 },
+
+            // More Telecommunications
+            { id: 43, name: "Verizon Communications", logo: "📡", logoUrl: "https://logo.clearbit.com/verizon.com", location: "United States", sector: "Telecommunications", description: "Leading provider of wireless, fiber-optic and global IP networks and services.", investmentPeriod: "4 Months", guaranteedReturn: 15, minimumInvestment: 300, maximumInvestment: 55000, currentProgress: 45, daysLeft: 134, likes: 16700, followers: 13200, founded: 1983, employees: "117,100+", revenue: "$136.8B", marketCap: "$172.3B", whatsapp: "+1-212-VERIZON", aiScore: 7.2, aiRecommendation: "hold", growthPotential: 66, riskLevel: 2.7, confidence: 80 },
+
+            // More Energy
+            { id: 44, name: "Exxon Mobil", logo: "⛽", logoUrl: "https://logo.clearbit.com/exxonmobil.com", location: "United States", sector: "Oil & Gas", description: "American multinational oil and gas corporation and one of the largest publicly traded companies.", investmentPeriod: "5 Months", guaranteedReturn: 16, minimumInvestment: 400, maximumInvestment: 70000, currentProgress: 40, daysLeft: 145, likes: 12400, followers: 9800, founded: 1999, employees: "62,000+", revenue: "$413.7B", marketCap: "$442.8B", whatsapp: "+1-972-EXXON", aiScore: 7.1, aiRecommendation: "hold", growthPotential: 65, riskLevel: 3.8, confidence: 78 },
+
+            // More Real Estate
+            { id: 45, name: "American Tower", logo: "📶", logoUrl: "https://logo.clearbit.com/americantower.com", location: "United States", sector: "Real Estate", description: "Leading independent owner, operator and developer of multitenant communications real estate.", investmentPeriod: "4 Months", guaranteedReturn: 17, minimumInvestment: 350, maximumInvestment: 65000, currentProgress: 50, daysLeft: 112, likes: 8900, followers: 6700, founded: 1995, employees: "5,500+", revenue: "$10.7B", marketCap: "$98.4B", whatsapp: "+1-617-AMERICAN", aiScore: 7.9, aiRecommendation: "buy", growthPotential: 76, riskLevel: 3.2, confidence: 82 },
+
+            // More Software
+            { id: 46, name: "Salesforce Inc.", logo: "☁️", logoUrl: "https://logo.clearbit.com/salesforce.com", location: "United States", sector: "Software", description: "Leading cloud-based software company providing customer relationship management services.", investmentPeriod: "4 Months", guaranteedReturn: 18, minimumInvestment: 300, maximumInvestment: 60000, currentProgress: 55, daysLeft: 89, likes: 14200, followers: 11800, founded: 1999, employees: "79,000+", revenue: "$31.4B", marketCap: "$248.9B", whatsapp: "+1-415-SALESFORCE", aiScore: 8.1, aiRecommendation: "buy", growthPotential: 79, riskLevel: 3.4, confidence: 83 },
+
+            // More Semiconductors
+            { id: 47, name: "Advanced Micro Devices", logo: "🔧", logoUrl: "https://logo.clearbit.com/amd.com", location: "United States", sector: "Technology", description: "Multinational semiconductor company developing computer processors and related technologies.", investmentPeriod: "3 Months", guaranteedReturn: 19, minimumInvestment: 250, maximumInvestment: 55000, currentProgress: 70, daysLeft: 56, likes: 18600, followers: 14900, founded: 1969, employees: "26,000+", revenue: "$23.6B", marketCap: "$238.7B", whatsapp: "+1-408-AMD", aiScore: 8.7, aiRecommendation: "buy", growthPotential: 88, riskLevel: 4.2, confidence: 85 },
+
+            // More Biotech
+            { id: 48, name: "Gilead Sciences", logo: "🧬", logoUrl: "https://logo.clearbit.com/gilead.com", location: "United States", sector: "Biotechnology", description: "Research-based biopharmaceutical company discovering, developing and commercializing medicines.", investmentPeriod: "4 Months", guaranteedReturn: 16, minimumInvestment: 300, maximumInvestment: 50000, currentProgress: 45, daysLeft: 123, likes: 11800, followers: 8900, founded: 1987, employees: "17,000+", revenue: "$27.3B", marketCap: "$108.9B", whatsapp: "+1-650-GILEAD", aiScore: 7.7, aiRecommendation: "hold", growthPotential: 73, riskLevel: 3.9, confidence: 79 },
+
+            // More Industrial
+            { id: 49, name: "Caterpillar Inc.", logo: "🚜", logoUrl: "https://logo.clearbit.com/caterpillar.com", location: "United States", sector: "Industrial", description: "Leading manufacturer of construction and mining equipment, diesel and natural gas engines.", investmentPeriod: "5 Months", guaranteedReturn: 17, minimumInvestment: 400, maximumInvestment: 70000, currentProgress: 35, daysLeft: 145, likes: 13500, followers: 10200, founded: 1925, employees: "114,000+", revenue: "$67.1B", marketCap: "$158.9B", whatsapp: "+1-309-CATERPILLAR", aiScore: 7.8, aiRecommendation: "buy", growthPotential: 75, riskLevel: 3.3, confidence: 81 },
+
+            // More Consumer Goods
+            { id: 50, name: "Procter & Gamble", logo: "🧴", logoUrl: "https://logo.clearbit.com/pg.com", location: "United States", sector: "Consumer Goods", description: "Multinational consumer goods corporation with brands in beauty, grooming, health care, and more.", investmentPeriod: "5 Months", guaranteedReturn: 15, minimumInvestment: 300, maximumInvestment: 55000, currentProgress: 50, daysLeft: 134, likes: 19200, followers: 15600, founded: 1837, employees: "101,000+", revenue: "$82.0B", marketCap: "$378.9B", whatsapp: "+1-513-PG", aiScore: 7.6, aiRecommendation: "hold", growthPotential: 70, riskLevel: 2.4, confidence: 84 }
+        ];
+
+        // User data storage
+        let currentUser = null;
+        let currentCompany = null;
+        let userLikes = new Set();
+        let userFollows = new Set();
+        let analyticsChart = null;
+        let currentChartTab = 'performance';
+
+        // AI Chat responses
+        const aiResponses = [
+            "Based on current market analysis, I recommend diversifying into renewable energy stocks. The sector shows 89% growth potential.",
+            "Your portfolio has an excellent AI score of 8.7/10. Consider increasing your Tesla position for optimal returns.",
+            "Market sentiment is bullish with 92% confidence. Technology stocks are particularly promising this quarter.",
+            "I've analyzed 50+ companies and identified 3 strong buy opportunities with guaranteed returns above 20%.",
+            "Risk assessment shows your portfolio is well-balanced. The AI predicts +18.5% growth in the next 6 months.",
+            "Based on your investment history, I suggest exploring the healthcare sector. Novo Nordisk shows strong fundamentals.",
+            "Current market volatility is low. This is an excellent time to invest in blue-chip stocks with AI scores above 8.5.",
+            "Your investment strategy aligns well with AI recommendations. Consider adding more cybersecurity stocks to your portfolio."
+        ];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('ARK Global AI Dashboard Loaded Successfully');
+
+            // Check for returning user
+            checkReturningUser();
+
+            // Render companies
+            renderCompanies();
+
+            // Initialize search functionality
+            initializeSearch();
+
+            // Initialize analytics chart
+            initializeAnalyticsChart();
+
+            // Add staggered animation delays
+            const cards = document.querySelectorAll('.company-card, .stat-card, .ai-insight-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('animate-fadeInUp');
+            });
+        });
+
+        // Check for returning user and show welcome message
+        function checkReturningUser() {
+            const userData = localStorage.getItem('arkGlobalUser');
+            if (userData) {
+                currentUser = JSON.parse(userData);
+                showWelcomeMessage();
+                updateUserAvatar();
+
+                // Load user preferences
+                const userPrefs = localStorage.getItem('arkGlobalUserPrefs');
+                if (userPrefs) {
+                    const prefs = JSON.parse(userPrefs);
+                    userLikes = new Set(prefs.likes || []);
+                    userFollows = new Set(prefs.follows || []);
+                }
+            } else {
+                // Create mock user for demo
+                setTimeout(() => {
+                    const mockUser = {
+                        name: 'John Doe',
+                        email: 'john.doe@example.com',
+                        signupTime: new Date().toISOString()
+                    };
+                    setCurrentUser(mockUser);
+                    localStorage.setItem('arkGlobalUser', JSON.stringify(mockUser));
+                    showWelcomeMessage();
+                    updateUserAvatar();
+                }, 1000);
+            }
+        }
+
+        // Set current user
+        function setCurrentUser(user) {
+            currentUser = user;
+        }
+
+        // Show personalized welcome message
+        function showWelcomeMessage() {
+            if (!currentUser) return;
+
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            const welcomeText = document.getElementById('welcomeText');
+
+            const hour = new Date().getHours();
+            let greeting = 'Good evening';
+            if (hour < 12) greeting = 'Good morning';
+            else if (hour < 18) greeting = 'Good afternoon';
+
+            const messages = [
+                `${greeting}, ${currentUser.name}! Your AI-powered portfolio is performing excellently today.`,
+                `Welcome back, ${currentUser.name}! AI has identified 3 new high-potential opportunities for you.`,
+                `${greeting}! Your portfolio AI score improved to 8.7/10, ${currentUser.name}!`,
+                `Great to see you again, ${currentUser.name}! AI predicts +18.5% growth in your investments.`
+            ];
+
+            welcomeText.textContent = messages[Math.floor(Math.random() * messages.length)];
+
+            // Show welcome message
+            setTimeout(() => {
+                welcomeMessage.classList.add('show');
+            }, 1000);
+
+            // Hide after 6 seconds
+            setTimeout(() => {
+                welcomeMessage.classList.remove('show');
+            }, 7000);
+        }
+
+        // Update user avatar
+        function updateUserAvatar() {
+            if (currentUser) {
+                const avatar = document.getElementById('userAvatar');
+                const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                avatar.textContent = initials;
+            }
+        }
+
+        // Initialize search functionality
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+
+            searchInput.addEventListener('input', function (e) {
+                const query = e.target.value.toLowerCase().trim();
+
+                if (query.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+
+                const filteredCompanies = companies.filter(company =>
+                    company.name.toLowerCase().includes(query) ||
+                    company.location.toLowerCase().includes(query) ||
+                    company.sector.toLowerCase().includes(query)
+                );
+
+                displaySearchResults(filteredCompanies);
+            });
+
+            // Hide search results when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+        }
+
+        // Display search results
+        function displaySearchResults(results) {
+            const searchResults = document.getElementById('searchResults');
+
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="search-result-item">No companies found</div>';
+            } else {
+                searchResults.innerHTML = results.slice(0, 8).map(company => `
+                    <div class="search-result-item" onclick="openCompanyModal(${company.id})">
+                        <div class="search-result-logo" style="background-image: url('${company.logoUrl}')">${company.logo}</div>
+                        <div class="search-result-info">
+                            <h4>${company.name}</h4>
+                            <p>${company.location} • ${company.sector} • AI Score: ${company.aiScore}/10</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            searchResults.style.display = 'block';
+        }
+
+        // Initialize analytics chart
+        function initializeAnalyticsChart() {
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+
+            const performanceData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Portfolio Value',
+                    data: [10000, 10500, 11200, 11800, 12100, 12450],
+                    borderColor: '#1E3A8A',
+                    backgroundColor: 'rgba(30, 58, 138, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            };
+
+            analyticsChart = new Chart(ctx, {
+                type: 'line',
+                data: performanceData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: '#E2E8F0'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: '#E2E8F0'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Switch chart tab
+        function switchChartTab(tab) {
+            currentChartTab = tab;
+
+            // Update tab buttons
+            document.querySelectorAll('.chart-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update chart data based on tab
+            let newData;
+            switch (tab) {
+                case 'performance':
+                    newData = {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Portfolio Value',
+                            data: [10000, 10500, 11200, 11800, 12100, 12450],
+                            borderColor: '#1E3A8A',
+                            backgroundColor: 'rgba(30, 58, 138, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    };
+                    break;
+                case 'predictions':
+                    newData = {
+                        labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'AI Predicted Value',
+                            data: [12450, 13200, 13800, 14500, 15100, 14750],
+                            borderColor: '#7C3AED',
+                            backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            borderDash: [5, 5]
+                        }]
+                    };
+                    break;
+                case 'risk':
+                    newData = {
+                        labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                        datasets: [{
+                            label: 'Risk Distribution',
+                            data: [65, 30, 5],
+                            backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                            borderWidth: 0
+                        }]
+                    };
+                    analyticsChart.config.type = 'doughnut';
+                    break;
+            }
+
+            if (tab === 'risk') {
+                analyticsChart.config.type = 'doughnut';
+            } else {
+                analyticsChart.config.type = 'line';
+            }
+
+            analyticsChart.data = newData;
+            analyticsChart.update();
+        }
+
+        // Render companies grid
+        function renderCompanies() {
+            const grid = document.getElementById('companiesGrid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+
+            // Show first 12 companies initially, sorted by AI score
+            const companiesToShow = companies
+                .sort((a, b) => b.aiScore - a.aiScore)
+                .slice(0, 12);
+
+            companiesToShow.forEach(company => {
+                const companyCard = createCompanyCard(company);
+                grid.appendChild(companyCard);
+            });
+        }
+
+        // Create company card with AI features
+        function createCompanyCard(company) {
+            const card = document.createElement('div');
+            card.className = 'company-card';
+            card.onclick = () => openCompanyModal(company.id);
+
+            card.innerHTML = `
+                <div class="ai-score-badge">
+                    <i class="fas fa-brain"></i>
+                    ${company.aiScore}/10
+                </div>
+                <div class="ai-recommendation ${company.aiRecommendation}">
+                    ${company.aiRecommendation.replace('-', ' ').toUpperCase()}
+                </div>
+                
+                <div class="company-header">
+                    <div class="company-info">
+                        <div class="company-logo" style="background-image: url('${company.logoUrl}')">${company.logo}</div>
+                        <div class="company-details">
+                            <h3>${company.name}</h3>
+                            <div class="company-location">
+                                <i class="fas fa-map-marker-alt"></i> ${company.location}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="company-stats">
+                        <div class="company-stat">
+                            <i class="fas fa-heart"></i>
+                            <span>${formatNumber(company.likes)}</span>
+                        </div>
+                        <div class="company-stat">
+                            <i class="fas fa-users"></i>
+                            <span>${formatNumber(company.followers)}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="investment-info">
+                    <div class="investment-detail">
+                        <div class="investment-detail-label">Investment Period</div>
+                        <div class="investment-detail-value">${company.investmentPeriod}</div>
+                    </div>
+                    <div class="investment-detail">
+                        <div class="investment-detail-label">Guaranteed Return</div>
+                        <div class="investment-detail-value profit">${company.guaranteedReturn}%</div>
+                    </div>
+                    <div class="investment-detail">
+                        <div class="investment-detail-label">Min Investment</div>
+                        <div class="investment-detail-value">$${formatNumber(company.minimumInvestment)}</div>
+                    </div>
+                    <div class="investment-detail">
+                        <div class="investment-detail-label">Max Investment</div>
+                        <div class="investment-detail-value">$${formatNumber(company.maximumInvestment)}</div>
+                    </div>
+                </div>
+                
+                <div class="ai-metrics">
+                    <div class="ai-metric">
+                        <div class="ai-metric-label">Growth Potential</div>
+                        <div class="ai-metric-value">${company.growthPotential}%</div>
+                    </div>
+                    <div class="ai-metric">
+                        <div class="ai-metric-label">Risk Level</div>
+                        <div class="ai-metric-value">${company.riskLevel}/10</div>
+                    </div>
+                    <div class="ai-metric">
+                        <div class="ai-metric-label">AI Confidence</div>
+                        <div class="ai-metric-value">${company.confidence}%</div>
+                    </div>
+                    <div class="ai-metric">
+                        <div class="ai-metric-label">Market Cap</div>
+                        <div class="ai-metric-value">${company.marketCap}</div>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${company.currentProgress}%"></div>
+                </div>
+                <div class="progress-text">${company.currentProgress}% funded • ${company.daysLeft} days left</div>
+                
+                <div class="company-actions">
+                    <button class="btn btn-primary" onclick="event.stopPropagation(); investNow(${company.id})">
+                        <i class="fas fa-rocket"></i> Invest Now
+                    </button>
+                    <button class="btn btn-outline" onclick="event.stopPropagation(); learnMore(${company.id})">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </button>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Format numbers for display
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+
+        // Show all companies
+        function showAllCompanies() {
+            const grid = document.getElementById('companiesGrid');
+            grid.innerHTML = '';
+
+            // Sort by AI score and show all companies
+            const sortedCompanies = companies.sort((a, b) => b.aiScore - a.aiScore);
+
+            sortedCompanies.forEach(company => {
+                const companyCard = createCompanyCard(company);
+                grid.appendChild(companyCard);
+            });
+
+            Swal.fire({
+                title: 'All 50+ Companies Loaded!',
+                html: `
+                    <div style="text-align: left;">
+                        <p>Explore our complete portfolio of AI-analyzed global investment opportunities:</p>
+                        <ul style="margin: 15px 0; padding-left: 20px;">
+                            <li>🧠 AI-powered investment scores</li>
+                            <li>📊 Real-time market analysis</li>
+                            <li>🎯 Personalized recommendations</li>
+                            <li>🔒 Guaranteed returns</li>
+                            <li>🌍 Global diversification</li>
+                        </ul>
+                        <p><strong>Average AI Score:</strong> 8.2/10</p>
+                        <p><strong>Top Recommendation:</strong> ${companies[0].name} (${companies[0].aiScore}/10)</p>
+                    </div>
+                `,
+                icon: 'success',
+                confirmButtonText: 'Start Exploring',
+                confirmButtonColor: '#1E3A8A'
+            });
+        }
+
+        // Open company modal with AI analysis
+        function openCompanyModal(companyId) {
+            currentCompany = companies.find(c => c.id === companyId);
+            if (!currentCompany) return;
+
+            // Update modal content
+            document.getElementById('modalCompanyLogo').style.backgroundImage = `url('${currentCompany.logoUrl}')`;
+            document.getElementById('modalCompanyLogo').textContent = currentCompany.logo;
+            document.getElementById('modalCompanyName').textContent = currentCompany.name;
+            document.getElementById('modalCompanyLocation').textContent = currentCompany.location;
+            document.getElementById('modalLikesCount').textContent = formatNumber(currentCompany.likes);
+            document.getElementById('modalFollowersCount').textContent = formatNumber(currentCompany.followers);
+
+            // Update overview tab
+            document.getElementById('companyDescription').textContent = currentCompany.description;
+            document.getElementById('investmentPeriod').textContent = currentCompany.investmentPeriod;
+            document.getElementById('guaranteedReturn').textContent = currentCompany.guaranteedReturn + '%';
+            document.getElementById('minimumInvestment').textContent = '$' + formatNumber(currentCompany.minimumInvestment);
+            document.getElementById('maximumInvestment').textContent = '$' + formatNumber(currentCompany.maximumInvestment);
+
+            // Update AI analysis tab
+            document.getElementById('aiOverallScore').textContent = currentCompany.aiScore;
+            document.getElementById('aiGrowthScore').textContent = (currentCompany.growthPotential / 10).toFixed(1);
+            document.getElementById('aiRiskScore').textContent = currentCompany.riskLevel;
+            document.getElementById('aiConfidence').textContent = currentCompany.confidence + '%';
+
+            // Update details tab
+            document.getElementById('companyFounded').textContent = currentCompany.founded;
+            document.getElementById('companyEmployees').textContent = currentCompany.employees;
+            document.getElementById('companyRevenue').textContent = currentCompany.revenue;
+            document.getElementById('companyMarketCap').textContent = currentCompany.marketCap;
+
+            // Update social buttons
+            updateSocialButtons();
+
+            // Show modal
+            document.getElementById('companyModal').style.display = 'block';
+
+            // Reset to overview tab
+            switchTab('overview');
+        }
+
+        // Update social buttons
+        function updateSocialButtons() {
+            const likeBtn = document.getElementById('likeBtn');
+            const followBtn = document.getElementById('followBtn');
+
+            if (userLikes.has(currentCompany.id)) {
+                likeBtn.classList.add('liked');
+                likeBtn.innerHTML = '<i class="fas fa-heart"></i><span>Liked</span>';
+            } else {
+                likeBtn.classList.remove('liked');
+                likeBtn.innerHTML = '<i class="fas fa-heart"></i><span>Like</span>';
+            }
+
+            if (userFollows.has(currentCompany.id)) {
+                followBtn.classList.add('following');
+                followBtn.innerHTML = '<i class="fas fa-user-check"></i><span>Following</span>';
+            } else {
+                followBtn.classList.remove('following');
+                followBtn.innerHTML = '<i class="fas fa-user-plus"></i><span>Follow</span>';
+            }
+        }
+
+        // Toggle like
+        function toggleLike() {
+            if (!currentCompany) return;
+
+            if (userLikes.has(currentCompany.id)) {
+                userLikes.delete(currentCompany.id);
+                currentCompany.likes--;
+                Swal.fire({
+                    title: 'Unliked!',
+                    text: `You unliked ${currentCompany.name}`,
+                    icon: 'info',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } else {
+                userLikes.add(currentCompany.id);
+                currentCompany.likes++;
+                Swal.fire({
+                    title: 'Liked!',
+                    text: `You liked ${currentCompany.name}`,
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+
+            updateSocialButtons();
+            document.getElementById('modalLikesCount').textContent = formatNumber(currentCompany.likes);
+            saveUserPreferences();
+        }
+
+        // Toggle follow
+        function toggleFollow() {
+            if (!currentCompany) return;
+
+            if (userFollows.has(currentCompany.id)) {
+                userFollows.delete(currentCompany.id);
+                currentCompany.followers--;
+                Swal.fire({
+                    title: 'Unfollowed!',
+                    text: `You unfollowed ${currentCompany.name}`,
+                    icon: 'info',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } else {
+                userFollows.add(currentCompany.id);
+                currentCompany.followers++;
+                Swal.fire({
+                    title: 'Following!',
+                    text: `You are now following ${currentCompany.name}`,
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+
+            updateSocialButtons();
+            document.getElementById('modalFollowersCount').textContent = formatNumber(currentCompany.followers);
+            saveUserPreferences();
+        }
+
+        // Share company
+        function shareCompany() {
+            if (!currentCompany) return;
+
+            const shareText = `🚀 Check out ${currentCompany.name} on ARK Global! 
+            
+🧠 AI Score: ${currentCompany.aiScore}/10
+📈 Guaranteed Return: ${currentCompany.guaranteedReturn}% in ${currentCompany.investmentPeriod}
+💰 Min Investment: $${formatNumber(currentCompany.minimumInvestment)}
+🎯 Growth Potential: ${currentCompany.growthPotential}%
+🔒 AI Confidence: ${currentCompany.confidence}%
+
+Powered by AI-driven investment analysis!`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: `${currentCompany.name} - ARK Global AI Investment`,
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback to copying to clipboard
+                navigator.clipboard.writeText(shareText).then(() => {
+                    Swal.fire({
+                        title: 'Copied to Clipboard!',
+                        text: 'Share text has been copied to your clipboard.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                });
+            }
+        }
+
+        // Save user preferences
+        function saveUserPreferences() {
+            const prefs = {
+                likes: Array.from(userLikes),
+                follows: Array.from(userFollows)
+            };
+            localStorage.setItem('arkGlobalUserPrefs', JSON.stringify(prefs));
+        }
+
+        // Switch modal tabs
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.modal-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName + 'Tab').classList.add('active');
+
+            // Add active class to selected tab
+            event.target.classList.add('active');
+        }
+
+        // Calculate returns with AI bonus
+        function calculateReturns() {
+            if (!currentCompany) return;
+
+            const amount = parseFloat(document.getElementById('investmentAmount').value);
+            const resultDiv = document.getElementById('calculatorResult');
+
+            if (!amount || amount < currentCompany.minimumInvestment || amount > currentCompany.maximumInvestment) {
+                resultDiv.style.display = 'none';
+                return;
+            }
+
+            const profit = amount * (currentCompany.guaranteedReturn / 100);
+            const aiBonus = amount * 0.02; // 2% AI bonus
+            const total = amount + profit + aiBonus;
+
+            document.getElementById('resultPeriod').textContent = currentCompany.investmentPeriod;
+            document.getElementById('initialAmount').textContent = '$' + formatNumber(amount);
+            document.getElementById('profitAmount').textContent = '$' + formatNumber(profit);
+            document.getElementById('aiBonusAmount').textContent = '$' + formatNumber(aiBonus);
+            document.getElementById('totalAmount').textContent = '$' + formatNumber(total);
+            document.getElementById('totalReturn').textContent = '$' + formatNumber(total);
+
+            resultDiv.style.display = 'block';
+        }
+
+        // Invest now function with AI insights
+        function investNow(companyId = null) {
+            const company = companyId ? companies.find(c => c.id === companyId) : currentCompany;
+            if (!company) return;
+
+            const amount = document.getElementById('investmentAmount')?.value || company.minimumInvestment;
+            const aiBonus = amount * 0.02;
+
+            Swal.fire({
+                title: `🚀 Invest in ${company.name}`,
+                html: `
+                    <div style="text-align: left; margin: 20px 0;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                            <h4 style="margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-brain"></i> AI Investment Analysis
+                            </h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px;">
+                                <div>🎯 AI Score: <strong>${company.aiScore}/10</strong></div>
+                                <div>📈 Growth: <strong>${company.growthPotential}%</strong></div>
+                                <div>⚠️ Risk: <strong>${company.riskLevel}/10</strong></div>
+                                <div>🔮 Confidence: <strong>${company.confidence}%</strong></div>
+                            </div>
+                        </div>
+                        
+                        <h4 style="color: #1E3A8A; margin-bottom: 15px;">💰 Investment Details:</h4>
+                        <ul style="margin-left: 20px; line-height: 1.8;">
+                            <li>💵 Investment Amount: <strong>$${formatNumber(amount)}</strong></li>
+                            <li>📈 Guaranteed Return: <strong>${company.guaranteedReturn}%</strong></li>
+                            <li>⏱️ Investment Period: <strong>${company.investmentPeriod}</strong></li>
+                            <li>💎 Expected Profit: <strong>$${formatNumber(amount * (company.guaranteedReturn / 100))}</strong></li>
+                            <li>🤖 AI Bonus (2%): <strong>$${formatNumber(aiBonus)}</strong></li>
+                            <li>🎯 Total Return: <strong>$${formatNumber(amount * (1 + company.guaranteedReturn / 100) + aiBonus)}</strong></li>
+                        </ul>
+                        
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                            <strong>🔄 Next Step:</strong> Your investment details will be securely sent to ARK Invest's WhatsApp for processing. You'll receive share documents within 24 hours after payment confirmation.
+                        </div>
+                        
+                        <div style="background: #e0f2fe; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            <small><strong>🤖 AI Recommendation:</strong> ${company.aiRecommendation.replace('-', ' ').toUpperCase()} - This investment aligns with your risk profile and growth objectives.</small>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: '📱 Proceed to WhatsApp',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#25D366',
+                cancelButtonColor: '#6c757d',
+                width: '600px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    initiateWhatsAppInvestment(company, amount);
+                }
+            });
+        }
+
+        // Initiate WhatsApp investment process
+        function initiateWhatsAppInvestment(company, amount) {
+            const aiBonus = amount * 0.02;
+            const message = `🚀 Hello ARK Invest! I want to invest in ${company.name}.
+
+🤖 AI INVESTMENT ANALYSIS:
+• AI Score: ${company.aiScore}/10
+• Growth Potential: ${company.growthPotential}%
+• Risk Level: ${company.riskLevel}/10
+• AI Confidence: ${company.confidence}%
+• Recommendation: ${company.aiRecommendation.replace('-', ' ').toUpperCase()}
+
+💰 INVESTMENT DETAILS:
+• Company: ${company.name} (${company.location})
+• Investment Amount: $${formatNumber(amount)}
+• Expected Return: ${company.guaranteedReturn}% in ${company.investmentPeriod}
+• Expected Profit: $${formatNumber(amount * (company.guaranteedReturn / 100))}
+• AI Bonus (2%): $${formatNumber(aiBonus)}
+• Total Return: $${formatNumber(amount * (1 + company.guaranteedReturn / 100) + aiBonus)}
+
+👤 INVESTOR INFORMATION:
+• Name: ${currentUser?.name || 'Not provided'}
+• Email: ${currentUser?.email || 'Not provided'}
+
+Please guide me through the secure AI-powered investment process and provide payment instructions. I understand that share documents will be emailed within 24 hours after payment confirmation.
+
+🔒 This investment was analyzed and recommended by ARK's AI system.`;
+
+            const whatsappUrl = `https://wa.me/${company.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+
+            Swal.fire({
+                title: '📱 Connecting to ARK Invest WhatsApp',
+                html: `
+                    <div style="text-align: center;">
+                        <i class="fab fa-whatsapp" style="font-size: 48px; color: #25D366; margin-bottom: 15px;"></i>
+                        <p>You will be redirected to WhatsApp to complete your AI-powered investment in <strong>${company.name}</strong>.</p>
+                        
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                            <h4 style="margin-bottom: 10px;">🤖 AI-Enhanced Investment Process:</h4>
+                            <ol style="text-align: left; margin: 0; padding-left: 20px;">
+                                <li>WhatsApp consultation with ARK Invest</li>
+                                <li>AI-verified investment processing</li>
+                                <li>Secure payment with AI fraud protection</li>
+                                <li>Share documents emailed within 24 hours</li>
+                                <li>AI portfolio tracking and optimization</li>
+                            </ol>
+                        </div>
+                        
+                        <div style="background: #f3e5f5; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                            <small><strong>🔒 Security Note:</strong> All transactions are processed through ARK Invest's official WhatsApp with AI-powered security monitoring for your protection.</small>
+                        </div>
+                    </div>
+                `,
+                confirmButtonText: '📱 Open WhatsApp',
+                confirmButtonColor: '#25D366',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.open(whatsappUrl, '_blank');
+
+                    // Track investment interest
+                    trackInvestmentInterest(company.name, amount);
+
+                    // Close modal if open
+                    closeModal('companyModal');
+                }
+            });
+        }
+
+        // Learn more function
+        function learnMore(companyId) {
+            openCompanyModal(companyId);
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Open AI Assistant
+        function openAIAssistant() {
+            document.getElementById('aiAssistantModal').style.display = 'block';
+        }
+
+        // Close AI Assistant
+        function closeAIAssistant() {
+            document.getElementById('aiAssistantModal').style.display = 'none';
+        }
+
+        // Handle AI chat key press
+        function handleAIChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendAIMessage();
+            }
+        }
+
+        // Send AI message
+        function sendAIMessage() {
+            const input = document.getElementById('aiChatInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            const chatContainer = document.getElementById('aiChatContainer');
+
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'ai-chat-message';
+            userMessage.innerHTML = `
+                <div class="ai-chat-avatar user">U</div>
+                <div class="ai-chat-bubble user">${message}</div>
+            `;
+            chatContainer.appendChild(userMessage);
+
+            // Clear input
+            input.value = '';
+
+            // Simulate AI response
+            setTimeout(() => {
+                const aiMessage = document.createElement('div');
+                aiMessage.className = 'ai-chat-message';
+                const response = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+                aiMessage.innerHTML = `
+                    <div class="ai-chat-avatar ai">AI</div>
+                    <div class="ai-chat-bubble ai">${response}</div>
+                `;
+                chatContainer.appendChild(aiMessage);
+
+                // Scroll to bottom
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 1000);
+
+            // Scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Show notifications
+        function showNotifications() {
+            Swal.fire({
+                title: '🔔 AI-Powered Notifications',
+                html: `
+                    <div style="text-align: left;">
+                        <div style="padding: 12px; border-left: 4px solid #10B981; background: #f0fdf4; margin-bottom: 12px; border-radius: 4px;">
+                            <strong>🎉 Investment Matured</strong><br>
+                            <small>Your Tesla investment has matured with 18% returns + 2% AI bonus!</small>
+                        </div>
+                        <div style="padding: 12px; border-left: 4px solid #7C3AED; background: #faf5ff; margin-bottom: 12px; border-radius: 4px;">
+                            <strong>🤖 AI Alert</strong><br>
+                            <small>NVIDIA shows 97% growth potential - Strong Buy recommendation</small>
+                        </div>
+                        <div style="padding: 12px; border-left: 4px solid #F59E0B; background: #fffbeb; margin-bottom: 12px; border-radius: 4px;">
+                            <strong>📈 New Opportunity</strong><br>
+                            <small>Vestas Wind Systems upgraded to AI Score 9.2/10</small>
+                        </div>
+                        <div style="padding: 12px; border-left: 4px solid #6366F1; background: #eef2ff; margin-bottom: 12px; border-radius: 4px;">
+                            <strong>💼 Portfolio Update</strong><br>
+                            <small>Your portfolio AI score improved to 8.7/10 (+0.3 this week)</small>
+                        </div>
+                        <div style="padding: 12px; border-left: 4px solid #EC4899; background: #fdf2f8; border-radius: 4px;">
+                            <strong>🎯 Market Insight</strong><br>
+                            <small>AI predicts +18.5% growth in your portfolio over next 6 months</small>
+                        </div>
+                    </div>
+                `,
+                confirmButtonText: 'Mark as Read',
+                confirmButtonColor: '#1E3A8A'
+            });
+        }
+
+        // Show user menu
+        function showUserMenu() {
+            Swal.fire({
+                title: `👋 Hello, ${currentUser?.name || 'User'}!`,
+                html: `
+                    <div style="text-align: left;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="margin: 0 0 8px 0;">🤖 Your AI Portfolio Score</h4>
+                            <div style="font-size: 24px; font-weight: bold;">8.7/10</div>
+                            <div style="font-size: 12px; opacity: 0.9;">Excellent performance!</div>
+                        </div>
+                        
+                        <button onclick="showProfile()" style="width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer;">
+                            <i class="fas fa-user"></i> View Profile
+                        </button>
+                        <button onclick="showSettings()" style="width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer;">
+                            <i class="fas fa-cog"></i> Settings
+                        </button>
+                        <button onclick="showAIInsights()" style="width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #7C3AED; border-radius: 8px; background: #faf5ff; color: #7C3AED; cursor: pointer;">
+                            <i class="fas fa-brain"></i> AI Insights
+                        </button>
+                        <button onclick="showHelp()" style="width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer;">
+                            <i class="fas fa-question-circle"></i> Help & Support
+                        </button>
+                        <button onclick="logout()" style="width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ef4444; border-radius: 8px; background: #fef2f2; color: #ef4444; cursor: pointer;">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCancelButton: true,
+                cancelButtonText: 'Close'
+            });
+        }
+
+        // Show AI insights
+        function showAIInsights() {
+            Swal.fire({
+                title: '🤖 Personalized AI Insights',
+                html: `
+                    <div style="text-align: left;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="margin: 0 0 10px 0;">📊 Portfolio Analysis</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px;">
+                                <div>Overall Score: <strong>8.7/10</strong></div>
+                                <div>Risk Level: <strong>3.2/10</strong></div>
+                                <div>Diversification: <strong>Excellent</strong></div>
+                                <div>Growth Potential: <strong>+18.5%</strong></div>
+                            </div>
+                        </div>
+                        
+                        <h4 style="color: #7C3AED; margin-bottom: 10px;">🎯 AI Recommendations:</h4>
+                        <ul style="margin-left: 20px; line-height: 1.6;">
+                            <li>Consider increasing Tesla position by 15%</li>
+                            <li>Add renewable energy stocks (Vestas Wind)</li>
+                            <li>Reduce exposure to traditional banking</li>
+                            <li>Optimal rebalancing in 2-3 weeks</li>
+                        </ul>
+                        
+                        <h4 style="color: #7C3AED; margin: 15px 0 10px 0;">📈 Market Predictions:</h4>
+                        <ul style="margin-left: 20px; line-height: 1.6;">
+                            <li>Technology sector: +22% (6 months)</li>
+                            <li>Renewable energy: +28% (6 months)</li>
+                            <li>Healthcare: +15% (6 months)</li>
+                            <li>Overall market: Bullish (92% confidence)</li>
+                        </ul>
+                    </div>
+                `,
+                confirmButtonText: 'Get Detailed Report',
+                confirmButtonColor: '#7C3AED'
+            });
+        }
+
+        // Show profile
+        function showProfile() {
+            Swal.fire({
+                title: '👤 User Profile',
+                html: `
+                    <div style="text-align: left;">
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="margin: 0 0 10px 0; color: #1E3A8A;">📊 Investment Summary</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                                <div>Portfolio Value: <strong>$12,450</strong></div>
+                                <div>Total Returns: <strong>$1,245</strong></div>
+                                <div>Active Investments: <strong>8</strong></div>
+                                <div>AI Score: <strong>8.7/10</strong></div>
+                            </div>
+                        </div>
+                        
+                        <p><strong>Name:</strong> ${currentUser?.name || 'Not provided'}</p>
+                        <p><strong>Email:</strong> ${currentUser?.email || 'Not provided'}</p>
+                        <p><strong>Member Since:</strong> ${currentUser?.signupTime ? new Date(currentUser.signupTime).toLocaleDateString() : 'Unknown'}</p>
+                        <p><strong>Investment Style:</strong> AI-Guided Growth</p>
+                        <p><strong>Risk Tolerance:</strong> Moderate</p>
+                        <p><strong>Preferred Sectors:</strong> Technology, Renewable Energy</p>
+                    </div>
+                `,
+                confirmButtonText: 'Edit Profile',
+                confirmButtonColor: '#1E3A8A'
+            });
+        }
+
+        // Show settings
+        function showSettings() {
+            Swal.fire({
+                title: '⚙️ Settings',
+                html: `
+                    <div style="text-align: left;">
+                        <h4>🔔 Notification Preferences</h4>
+                        <label style="display: block; margin: 8px 0;">
+                            <input type="checkbox" checked> Email notifications
+                        </label>
+                        <label style="display: block; margin: 8px 0;">
+                            <input type="checkbox" checked> AI investment alerts
+                        </label>
+                        <label style="display: block; margin: 8px 0;">
+                            <input type="checkbox" checked> Portfolio updates
+                        </label>
+                        <label style="display: block; margin: 8px 0;">
+                            <input type="checkbox"> Marketing emails
+                        </label>
+                        
+                        <h4 style="margin-top: 20px;">🤖 AI Preferences</h4>
+                        <label style="display: block; margin: 8px 0;">
+                            <input type="checkbox" checked> Auto-rebalancing suggestions
+                        </label>
+                        <label style="display: block; margin: 8px 0;">
+                            <input type="checkbox" checked> Risk alerts
+                        </label>
+                        <label style="display: block; margin: 8px 0;">
+                            <input type="checkbox" checked> Market predictions
+                        </label>
+                        
+                        <h4 style="margin-top: 20px;">🔒 Security</h4>
+                        <button style="width: 100%; padding: 8px; margin: 4px 0; border: 1px solid #e2e8f0; border-radius: 4px; background: white;">
+                            Change Password
+                        </button>
+                        <button style="width: 100%; padding: 8px; margin: 4px 0; border: 1px solid #e2e8f0; border-radius: 4px; background: white;">
+                            Enable 2FA
+                        </button>
+                    </div>
+                `,
+                confirmButtonText: 'Save Settings',
+                confirmButtonColor: '#1E3A8A'
+            });
+        }
+
+        // Show help
+        function showHelp() {
+            Swal.fire({
+                title: '❓ Help & Support',
+                html: `
+                    <div style="text-align: left;">
+                        <h4>📞 Contact Support</h4>
+                        <p>📧 Email: support@arkglobal.com</p>
+                        <p>📱 WhatsApp: +1-800-ARK-GLOBAL</p>
+                        <p>🤖 AI Assistant: Available 24/7</p>
+                        <p>💬 Live Chat: Available 24/7</p>
+                        
+                        <h4 style="margin-top: 20px;">📚 Quick Links</h4>
+                        <a href="#" style="display: block; margin: 4px 0; color: #1E3A8A;">🤖 AI Investment Guide</a>
+                        <a href="#" style="display: block; margin: 4px 0; color: #1E3A8A;">❓ FAQ</a>
+                        <a href="#" style="display: block; margin: 4px 0; color: #1E3A8A;">📋 Terms of Service</a>
+                        <a href="#" style="display: block; margin: 4px 0; color: #1E3A8A;">🔒 Privacy Policy</a>
+                        <a href="#" style="display: block; margin: 4px 0; color: #1E3A8A;">🧠 How AI Works</a>
+                        
+                        <h4 style="margin-top: 20px;">🎓 Learning Center</h4>
+                        <a href="#" style="display: block; margin: 4px 0; color: #7C3AED;">📊 Understanding AI Scores</a>
+                        <a href="#" style="display: block; margin: 4px 0; color: #7C3AED;">📈 Investment Strategies</a>
+                        <a href="#" style="display: block; margin: 4px 0; color: #7C3AED;">⚠️ Risk Management</a>
+                    </div>
+                `,
+                confirmButtonText: 'Contact Support',
+                confirmButtonColor: '#1E3A8A'
+            });
+        }
+
+        // Logout function
+        function logout() {
+            Swal.fire({
+                title: '👋 Logout',
+                text: 'Are you sure you want to logout?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Logout',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#EF4444'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('arkGlobalUser');
+                    localStorage.removeItem('arkGlobalUserPrefs');
+
+                    Swal.fire({
+                        title: '✅ Logged Out',
+                        text: 'You have been successfully logged out. Your AI data is securely saved.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                }
+            });
+        }
+
+        // Track investment interest
+        function trackInvestmentInterest(companyName, amount) {
+            console.log(`Investment interest tracked: ${companyName} - $${amount}`);
+            // In a real app, this would send data to analytics
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const companyModal = document.getElementById('companyModal');
+            const aiModal = document.getElementById('aiAssistantModal');
+
+            if (event.target === companyModal) {
+                closeModal('companyModal');
+            }
+            if (event.target === aiModal) {
+                closeAIAssistant();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeModal('companyModal');
+                closeAIAssistant();
+            }
+        });
+
+        console.log('🚀 ARK Global AI-Powered Investment Dashboard Loaded Successfully');
+        console.log('🤖 AI Features: Market Analysis, Investment Scoring, Predictions, and Personalized Recommendations');
+        console.log('📊 Companies: 50+ Global Investment Opportunities with Real-time AI Analysis');
+    </script>
+</body>
+
+</html>
