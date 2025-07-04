@@ -25,8 +25,44 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- EmailJS -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- Firebase v9 SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmunkh08f-Rhh6Fl-tHICMwT4Rk-CAtGQ",
+            authDomain: "ark-investment-f6d60.firebaseapp.com",
+            databaseURL: "https://ark-investment-f6d60-default-rtdb.firebaseio.com",
+            projectId: "ark-investment-f6d60",
+            storageBucket: "ark-investment-f6d60.firebasestorage.app",
+            messagingSenderId: "408302445275",
+            appId: "1:408302445275:web:c1cb837bbc4c03255422fe",
+            measurementId: "G-1XG40TM68W"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Make Firebase services available globally
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.firebaseServices = {
+            onAuthStateChanged,
+            signOut,
+            doc,
+            setDoc,
+            getDoc,
+            collection,
+            addDoc
+        };
+
+        console.log('Firebase initialized successfully');
+    </script>
 
     <style>
         :root {
@@ -82,98 +118,32 @@
             font-family: 'Space Grotesk', sans-serif;
         }
 
-        .text-xs {
-            font-size: 12px;
-        }
+        .text-xs { font-size: 12px; }
+        .text-sm { font-size: 14px; }
+        .text-base { font-size: 16px; }
+        .text-lg { font-size: 18px; }
+        .text-xl { font-size: 20px; }
+        .text-2xl { font-size: 24px; }
+        .text-3xl { font-size: 30px; }
+        .text-4xl { font-size: 36px; }
 
-        .text-sm {
-            font-size: 14px;
-        }
-
-        .text-base {
-            font-size: 16px;
-        }
-
-        .text-lg {
-            font-size: 18px;
-        }
-
-        .text-xl {
-            font-size: 20px;
-        }
-
-        .text-2xl {
-            font-size: 24px;
-        }
-
-        .text-3xl {
-            font-size: 30px;
-        }
-
-        .text-4xl {
-            font-size: 36px;
-        }
-
-        .font-light {
-            font-weight: 300;
-        }
-
-        .font-normal {
-            font-weight: 400;
-        }
-
-        .font-medium {
-            font-weight: 500;
-        }
-
-        .font-semibold {
-            font-weight: 600;
-        }
-
-        .font-bold {
-            font-weight: 700;
-        }
-
-        .font-extrabold {
-            font-weight: 800;
-        }
+        .font-light { font-weight: 300; }
+        .font-normal { font-weight: 400; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+        .font-extrabold { font-weight: 800; }
 
         /* Layout */
-        .flex {
-            display: flex;
-        }
-
-        .flex-col {
-            flex-direction: column;
-        }
-
-        .items-center {
-            align-items: center;
-        }
-
-        .justify-center {
-            justify-content: center;
-        }
-
-        .justify-between {
-            justify-content: space-between;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .relative {
-            position: relative;
-        }
-
-        .absolute {
-            position: absolute;
-        }
-
-        .hidden {
-            display: none;
-        }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .text-center { text-align: center; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .hidden { display: none; }
 
         /* Components */
         .btn {
@@ -411,15 +381,8 @@
         }
 
         @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         /* Search Bar */
@@ -913,9 +876,7 @@
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
         @keyframes fadeInUp {
@@ -923,7 +884,6 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -956,7 +916,6 @@
                 opacity: 0;
                 transform: translate(-50%, -50%) scale(0.8);
             }
-
             100% {
                 opacity: 1;
                 transform: translate(-50%, -50%) scale(1);
@@ -968,11 +927,11 @@
             .companies-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-
+            
             .payment-options {
                 grid-template-columns: repeat(2, 1fr);
             }
-
+            
             .dashboard-stats {
                 grid-template-columns: repeat(4, 1fr);
             }
@@ -1040,14 +999,13 @@
 
         /* Touch optimizations */
         @media (hover: none) and (pointer: coarse) {
-
             .btn:hover,
             .card:hover,
             .company-card:hover,
             .buy-stock-btn:hover {
                 transform: none;
             }
-
+            
             .btn:active,
             .buy-stock-btn:active {
                 transform: scale(0.95);
@@ -1055,8 +1013,7 @@
         }
 
         /* High DPI displays */
-        @media (-webkit-min-device-pixel-ratio: 2),
-        (min-resolution: 192dpi) {
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
             body {
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
@@ -1082,10 +1039,7 @@
                     <span class="logo-text">ARK Global</span>
                 </a>
                 <div class="nav-actions" id="navActions">
-                    <div class="user-info">
-                        <div class="user-avatar">I</div>
-                        <span style="font-weight: 600; color: var(--primary-blue); font-size: 12px;">Investor</span>
-                    </div>
+                    <!-- Will be populated by JavaScript -->
                 </div>
             </nav>
         </div>
@@ -1204,9 +1158,6 @@
     </section>
 
     <script>
-        // Initialize EmailJS
-        emailjs.init("y8MXkyOQOmL33px9_"); // Replace with your EmailJS public key
-
         // Countries list for dropdown
         const countries = [
             "United States", "Canada", "United Kingdom", "Germany", "France", "Italy", "Spain", "Netherlands",
@@ -2810,18 +2761,32 @@
         ];
 
         // Current user data
-        let currentUser = {
-            uid: 'demo-user',
-            name: 'Investor',
-            email: 'investor@arkglobal.com',
-            photoURL: null
-        };
+        let currentUser = null;
         let filteredCompanies = [...companies];
         let selectedPaymentMethod = null;
 
         // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             console.log('📱 Mobile-Optimized Stock Trading Dashboard Loading...');
+
+            // Wait for Firebase to be ready
+            await waitForFirebase();
+
+            // Check authentication
+            window.firebaseServices.onAuthStateChanged(window.firebaseAuth, (user) => {
+                if (user) {
+                    handleAuthenticatedUser(user);
+                } else {
+                    // For demo purposes, create a mock user
+                    currentUser = {
+                        uid: 'demo-user',
+                        name: 'Demo User',
+                        email: 'demo@arkglobal.com',
+                        photoURL: null
+                    };
+                    updateDashboardForUser();
+                }
+            });
 
             // Initialize search functionality
             initializeSearch();
@@ -2834,6 +2799,73 @@
 
             console.log('📱 Mobile-Optimized ARK Global Investment Platform Loaded Successfully');
         });
+
+        // Wait for Firebase to be ready
+        async function waitForFirebase() {
+            return new Promise((resolve) => {
+                const checkFirebase = () => {
+                    if (window.firebaseAuth && window.firebaseServices) {
+                        resolve();
+                    } else {
+                        setTimeout(checkFirebase, 100);
+                    }
+                };
+                checkFirebase();
+            });
+        }
+
+        // Handle authenticated user
+        function handleAuthenticatedUser(user) {
+            currentUser = {
+                uid: user.uid,
+                name: user.displayName || user.email.split('@')[0],
+                email: user.email,
+                photoURL: user.photoURL
+            };
+
+            // Update UI
+            updateDashboardForUser();
+        }
+
+        // Update dashboard for authenticated user
+        function updateDashboardForUser() {
+            // Update dashboard title
+            const dashboardTitle = document.getElementById('dashboardTitle');
+            if (dashboardTitle && currentUser) {
+                dashboardTitle.textContent = `Welcome to ARK Global Investment Connection, ${currentUser.name}!`;
+            }
+
+            // Update navigation
+            const navActions = document.getElementById('navActions');
+            if (navActions && currentUser) {
+                navActions.innerHTML = `
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            ${currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+                        </div>
+                        <span style="font-weight: 600; color: var(--primary-blue); font-size: 12px;">${currentUser.name || 'User'}</span>
+                        <button class="btn btn-outline btn-xs" onclick="handleLogout()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Handle logout
+        function handleLogout() {
+            if (window.firebaseServices && window.firebaseAuth) {
+                window.firebaseServices.signOut(window.firebaseAuth)
+                    .then(() => {
+                        window.location.href = 'index.html';
+                    })
+                    .catch((error) => {
+                        console.error('Logout error:', error);
+                    });
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
 
         // Initialize search functionality
         function initializeSearch() {
@@ -3065,31 +3097,6 @@
             setTimeout(() => {
                 successDiv.remove();
             }, 2000);
-        }
-
-        // Send email using EmailJS
-        async function sendEmailWithDetails(emailContent, investorData) {
-            try {
-                const templateParams = {
-                    to_email: 'alexiusdubem7@gmail.com',
-                    from_name: investorData.name,
-                    from_email: investorData.email,
-                    subject: '🚀 ARK Global Stock Investment Executed',
-                    message: emailContent
-                };
-
-                const response = await emailjs.send(
-                    'service_mhujfsr', // Replace with your EmailJS service ID
-                    'template_7g3qde4', // Replace with your EmailJS template ID
-                    templateParams
-                );
-
-                console.log('Email sent successfully:', response);
-                return true;
-            } catch (error) {
-                console.error('Email sending failed:', error);
-                return false;
-            }
         }
 
         // Open stock trading modal
@@ -3462,7 +3469,7 @@
                     </div>
                 `,
                 showCancelButton: true,
-                confirmButtonText: '<i class="fas fa-paper-plane"></i> Send Investment Details',
+                confirmButtonText: '<i class="fas fa-clipboard"></i> Copy Details & Send Email',
                 cancelButtonText: 'Cancel',
                 confirmButtonColor: '#16A34A',
                 cancelButtonColor: '#6c757d',
@@ -3537,17 +3544,17 @@
             });
         }
 
-        // Execute stock trade and send email
+        // Execute stock trade and copy details to clipboard
         async function executeStockTrade(companyName, ticker, stockPrice, shares, totalCost, expectedReturn, maturityMonths, orderDetails, investorData) {
             // Show processing animation
             Swal.fire({
-                title: '📧 Sending Investment Details...',
+                title: '📋 Preparing Details for Copy & Send...',
                 html: `
                     <div style="text-align: center; padding: 20px;">
                         <div class="loading" style="width: 40px; height: 40px; margin: 0 auto 20px;"></div>
                         <p>Processing your stock purchase order...</p>
                         <div style="font-size: 12px; color: #64748B; margin-top: 10px;">
-                            Executing trade • Calculating projections • Sending email details
+                            Executing trade • Calculating projections • Preparing email details
                         </div>
                     </div>
                 `,
@@ -3594,29 +3601,38 @@
             };
 
             try {
-                // Prepare email content
+                // Save to Firestore
+                if (window.firebaseDb) {
+                    await window.firebaseServices.addDoc(
+                        window.firebaseServices.collection(window.firebaseDb, 'trades'),
+                        tradeData
+                    );
+                }
+
+                // Prepare email content for clipboard
                 const emailContent = await prepareEmailContent(tradeData);
-
-                // Try to send email using EmailJS
-                const emailSent = await sendEmailWithDetails(emailContent, investorData);
-
-                // Copy to clipboard as backup
+                
+                // Copy to clipboard
                 const copySuccess = await copyToClipboard(emailContent);
-
+                
                 // Close processing modal
                 Swal.close();
 
-                if (emailSent) {
-                    // Show success message
+                if (copySuccess) {
+                    // Show success message with clipboard confirmation
+                    showClipboardSuccess();
+                    
+                    // Show success modal with Gmail link
                     Swal.fire({
-                        title: '✅ Investment Details Sent Successfully!',
+                        title: '✅ Details Copied Successfully!',
                         html: `
                             <div style="text-align: center; padding: 20px;">
                                 <div style="background: #e0f2fe; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                                    <i class="fas fa-paper-plane" style="font-size: 48px; color: #16A34A; margin-bottom: 15px;"></i>
-                                    <h3 style="color: #0277bd; margin-bottom: 10px;">📧 Investment Details Sent!</h3>
+                                    <i class="fas fa-clipboard-check" style="font-size: 48px; color: #16A34A; margin-bottom: 15px;"></i>
+                                    <h3 style="color: #0277bd; margin-bottom: 10px;">📋 Investment Details Copied!</h3>
                                     <p style="color: #0277bd; font-size: 14px; margin-bottom: 15px;">
-                                        Your investment details have been successfully sent to our team at alexiusdubem7@gmail.com
+                                        All your investment details have been copied to your clipboard. 
+                                        Click the button below to open Gmail and paste the details.
                                     </p>
                                     <div style="background: rgba(2, 119, 189, 0.1); padding: 15px; border-radius: 8px;">
                                         <div style="font-size: 12px; color: #0277bd;">
@@ -3629,40 +3645,17 @@
                                 </div>
                                 
                                 <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                                    <h4 style="color: #0277bd; margin-bottom: 10px;">📞 What's Next?</h4>
-                                    <div style="text-align: left; color: #0277bd; font-size: 13px; line-height: 1.6;">
-                                        • Our team will review your investment request within 24 hours<br>
-                                        • You'll receive payment instructions via email<br>
-                                        • Trade execution confirmation will be sent once payment is processed<br>
-                                        • 24/7 support available at +1 (334) 400-3657
-                                    </div>
+                                    <h4 style="color: #0277bd; margin-bottom: 10px;">📧 Next Steps:</h4>
+                                    <ol style="text-align: left; color: #0277bd; font-size: 13px; line-height: 1.6;">
+                                        <li>Click "Open Gmail" below</li>
+                                        <li>Compose new email to: <strong>alexiusdubem7@gmail.com</strong></li>
+                                        <li>Paste the copied details (Ctrl+V or Cmd+V)</li>
+                                        <li>Send the email</li>
+                                    </ol>
                                 </div>
                             </div>
                         `,
-                        confirmButtonText: '<i class="fas fa-check"></i> Got It!',
-                        confirmButtonColor: '#16A34A',
-                        allowOutsideClick: false
-                    });
-                } else {
-                    // Fallback to clipboard and Gmail
-                    if (copySuccess) {
-                        showClipboardSuccess();
-                    }
-
-                    Swal.fire({
-                        title: '📧 Please Send Details Manually',
-                        html: `
-                            <div style="text-align: center; padding: 20px;">
-                                <i class="fas fa-envelope" style="font-size: 48px; color: #F59E0B; margin-bottom: 20px;"></i>
-                                <p>Your investment details are ready. Please send them manually to our team.</p>
-                                <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
-                                    <strong>Email to:</strong> alexiusdubem7@gmail.com<br>
-                                    <strong>Subject:</strong> ARK Global Stock Investment - Order ${orderId}
-                                </div>
-                                <textarea style="width: 100%; height: 200px; margin: 15px 0; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 12px;" readonly>${emailContent}</textarea>
-                            </div>
-                        `,
-                        confirmButtonText: '<i class="fab fa-google"></i> Open Gmail',
+                        confirmButtonText: '<i class="fab fa-google"></i> Open Gmail & Send',
                         showCancelButton: true,
                         cancelButtonText: '<i class="fas fa-copy"></i> Copy Again',
                         confirmButtonColor: '#16A34A',
@@ -3670,11 +3663,30 @@
                         allowOutsideClick: false
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            // Open Gmail
                             window.open('https://mail.google.com/mail/u/0/#inbox?compose=new', '_blank');
                         } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            // Copy again
                             copyToClipboard(emailContent);
                             showClipboardSuccess();
                         }
+                    });
+                } else {
+                    // Fallback if clipboard fails
+                    Swal.fire({
+                        title: '📧 Email Details Ready',
+                        html: `
+                            <div style="text-align: center; padding: 20px;">
+                                <i class="fas fa-envelope" style="font-size: 48px; color: #16A34A; margin-bottom: 20px;"></i>
+                                <p>Your investment details are ready. Please copy the text below and send it to <strong>alexiusdubem7@gmail.com</strong></p>
+                                <textarea style="width: 100%; height: 200px; margin: 15px 0; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 12px;" readonly>${emailContent}</textarea>
+                            </div>
+                        `,
+                        confirmButtonText: '<i class="fab fa-google"></i> Open Gmail',
+                        confirmButtonColor: '#16A34A',
+                        allowOutsideClick: false
+                    }).then(() => {
+                        window.open('https://mail.google.com/mail/u/0/#inbox?compose=new', '_blank');
                     });
                 }
 
@@ -3704,7 +3716,7 @@
             }
         }
 
-        // Prepare email content
+        // Prepare email content for clipboard
         async function prepareEmailContent(tradeData) {
             const subject = `🚀 ARK Global Stock Investment Executed - Order ${tradeData.orderId}`;
 
@@ -3834,7 +3846,7 @@ ${tradeData.investorInfo.name}
 📧 Send to: alexiusdubem7@gmail.com
             `.trim();
 
-            return emailBody;
+            return `Subject: ${subject}\n\nTo: alexiusdubem7@gmail.com\n\n${emailBody}`;
         }
 
         // Smooth scrolling for navigation
@@ -3875,7 +3887,7 @@ ${tradeData.investorInfo.name}
             console.log(`📱 ARK Global Mobile Investment Platform loaded in ${loadTime.toFixed(2)}ms`);
         });
 
-        console.log('📱 ARK Global Mobile-Optimized Investment Platform with Email Functionality Loaded Successfully');
+        console.log('📱 ARK Global Mobile-Optimized Investment Platform with Firebase & Clipboard Functionality Loaded Successfully');
     </script>
 </body>
 
