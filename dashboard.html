@@ -3,10 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Dashboard - ARK Global Investment Connection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description"
-        content="Manage your global stock portfolio with ARK Global's comprehensive investment dashboard.">
+        content="ARK Global Investment Connection - Trade stocks from 90+ companies across 6 continents with professional mobile-optimized platform">
+    <meta name="theme-color" content="#1E3A8A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ARK Global">
+    <title>ARK Global Investment Connection - Global Stock Trading Platform</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,47 +25,8 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Firebase v9 SDK -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBmunkh08f-Rhh6Fl-tHICMwT4Rk-CAtGQ",
-            authDomain: "ark-investment-f6d60.firebaseapp.com",
-            databaseURL: "https://ark-investment-f6d60-default-rtdb.firebaseio.com",
-            projectId: "ark-investment-f6d60",
-            storageBucket: "ark-investment-f6d60.firebasestorage.app",
-            messagingSenderId: "408302445275",
-            appId: "1:408302445275:web:c1cb837bbc4c03255422fe",
-            measurementId: "G-1XG40TM68W"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Make Firebase services available globally
-        window.firebaseAuth = auth;
-        window.firebaseDb = db;
-        window.firebaseServices = {
-            onAuthStateChanged,
-            signOut,
-            doc,
-            setDoc,
-            getDoc,
-            collection,
-            addDoc
-        };
-
-        console.log('Firebase initialized successfully');
-    </script>
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
     <style>
         :root {
@@ -99,8 +64,11 @@
             background: var(--light-gray);
             overflow-x: hidden;
             font-weight: 400;
-            padding-top: 80px;
+            padding-top: 70px;
             padding-bottom: 80px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-overflow-scrolling: touch;
         }
 
         .container {
@@ -213,22 +181,28 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            padding: 8px 16px;
+            padding: 10px 16px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
             box-shadow: var(--shadow-sm);
             font-family: 'Space Grotesk', sans-serif;
             white-space: nowrap;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn-primary {
@@ -258,18 +232,18 @@
         }
 
         .btn-sm {
-            padding: 6px 12px;
-            font-size: 11px;
+            padding: 8px 14px;
+            font-size: 12px;
         }
 
         .btn-xs {
-            padding: 4px 8px;
-            font-size: 10px;
+            padding: 6px 10px;
+            font-size: 11px;
         }
 
         .card {
             background: var(--primary-white);
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: var(--shadow-lg);
             overflow: hidden;
             transition: all 0.3s ease;
@@ -277,8 +251,8 @@
         }
 
         .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-2xl);
         }
 
         /* Header */
@@ -314,17 +288,15 @@
             flex-shrink: 0;
         }
 
-        .logo-icon {
-            max-width: 100%;
-            height: auto;
-            width: 120px;
-            display: block;
+        .logo i {
+            margin-right: 8px;
+            font-size: 20px;
         }
 
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             flex-shrink: 0;
         }
 
@@ -332,14 +304,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 12px;
+            padding: 8px 12px;
             background: var(--light-gray);
-            border-radius: 8px;
+            border-radius: 12px;
         }
 
         .user-avatar {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: var(--primary-blue);
             color: var(--primary-white);
@@ -347,33 +319,35 @@
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         /* Dashboard Specific Styles */
         .dashboard-header {
             background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-teal) 100%);
             color: var(--primary-white);
-            padding: 40px 0;
+            padding: 30px 0;
             margin-bottom: 30px;
         }
 
         .dashboard-title {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             margin-bottom: 10px;
             font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.2;
         }
 
         .dashboard-subtitle {
             font-size: 14px;
             opacity: 0.9;
+            line-height: 1.5;
         }
 
         .dashboard-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            gap: 12px;
             margin: 20px 0;
         }
 
@@ -386,7 +360,7 @@
         }
 
         .stat-number {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 800;
             display: block;
             margin-bottom: 4px;
@@ -421,9 +395,9 @@
             gap: 6px;
             background: var(--market-green);
             color: var(--primary-white);
-            padding: 4px 8px;
+            padding: 6px 12px;
             border-radius: 50px;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             margin-bottom: 10px;
         }
@@ -461,9 +435,9 @@
 
         .search-input {
             width: 100%;
-            padding: 12px 16px 12px 45px;
+            padding: 14px 16px 14px 45px;
             border: 2px solid var(--border-gray);
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 16px;
             font-weight: 500;
             background: var(--primary-white);
@@ -474,7 +448,7 @@
         .search-input:focus {
             outline: none;
             border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
         }
 
         .search-icon {
@@ -496,7 +470,7 @@
             color: var(--medium-gray);
             cursor: pointer;
             font-size: 16px;
-            padding: 4px;
+            padding: 6px;
             border-radius: 50%;
             transition: all 0.2s ease;
         }
@@ -522,7 +496,7 @@
             gap: 6px;
             background: var(--light-gray);
             color: var(--primary-blue);
-            padding: 6px 12px;
+            padding: 8px 16px;
             border-radius: 50px;
             font-size: 12px;
             font-weight: 600;
@@ -530,7 +504,7 @@
         }
 
         .section-title {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 800;
             margin-bottom: 10px;
             color: var(--primary-blue);
@@ -544,14 +518,14 @@
 
         .companies-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 16px;
         }
 
         .company-card {
-            padding: 12px;
+            padding: 16px;
             background: var(--primary-white);
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: var(--shadow-md);
             border: 1px solid var(--border-gray);
             transition: all 0.3s ease;
@@ -559,27 +533,27 @@
         }
 
         .company-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
         }
 
         .company-header {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .company-logo {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            margin-right: 8px;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            margin-right: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             color: var(--primary-white);
-            font-size: 10px;
+            font-size: 12px;
             font-family: 'Space Grotesk', sans-serif;
             flex-shrink: 0;
             overflow: hidden;
@@ -590,7 +564,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 4px;
+            border-radius: 6px;
         }
 
         .company-info {
@@ -599,10 +573,10 @@
         }
 
         .company-info h3 {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 700;
             color: var(--primary-blue);
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             font-family: 'Space Grotesk', sans-serif;
             line-height: 1.2;
             overflow: hidden;
@@ -611,22 +585,22 @@
         }
 
         .company-location {
-            font-size: 9px;
+            font-size: 11px;
             color: var(--medium-gray);
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
         }
 
         .stock-ticker {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 12px;
+            right: 12px;
             background: var(--market-green);
             color: var(--primary-white);
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
             font-weight: 700;
             font-family: 'Space Grotesk', sans-serif;
         }
@@ -636,14 +610,14 @@
         }
 
         .company-details {
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .company-description {
             color: var(--medium-gray);
-            line-height: 1.3;
-            margin-bottom: 6px;
-            font-size: 10px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            font-size: 12px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -653,23 +627,23 @@
         .stock-info {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-            margin-bottom: 8px;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         .stock-item {
             background: var(--light-gray);
-            padding: 6px;
-            border-radius: 4px;
+            padding: 8px;
+            border-radius: 8px;
             text-align: center;
         }
 
         .stock-value {
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 700;
             display: block;
             font-family: 'Space Grotesk', sans-serif;
-            margin-bottom: 1px;
+            margin-bottom: 2px;
         }
 
         .stock-value.price {
@@ -684,12 +658,8 @@
             color: var(--market-red);
         }
 
-        .stock-value.dividend {
-            color: var(--success-green);
-        }
-
         .stock-label {
-            font-size: 8px;
+            font-size: 9px;
             color: var(--medium-gray);
             font-weight: 500;
         }
@@ -698,16 +668,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .company-sector {
             background: var(--light-gray);
             color: var(--primary-blue);
-            padding: 2px 6px;
+            padding: 4px 8px;
             border-radius: 50px;
-            font-size: 8px;
+            font-size: 9px;
             font-weight: 600;
         }
 
@@ -715,20 +685,26 @@
             background: var(--market-green);
             color: var(--primary-white);
             border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 9px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .buy-stock-btn:hover {
             background: #15803d;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+        }
+
+        .buy-stock-btn:active {
+            transform: translateY(0);
         }
 
         /* Mobile Bottom Navigation */
@@ -757,12 +733,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 6px 8px;
+            padding: 8px 12px;
             text-decoration: none;
             color: var(--medium-gray);
             transition: all 0.2s ease;
-            border-radius: 8px;
-            min-width: 50px;
+            border-radius: 12px;
+            min-width: 60px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .mobile-nav-item:hover,
@@ -772,36 +750,37 @@
         }
 
         .mobile-nav-item i {
-            font-size: 16px;
-            margin-bottom: 2px;
+            font-size: 18px;
+            margin-bottom: 4px;
         }
 
         .mobile-nav-item span {
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 500;
             font-family: 'Space Grotesk', sans-serif;
         }
 
         /* Form Styles */
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
         .form-label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: var(--primary-blue);
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .form-input {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px 14px;
             border: 2px solid var(--border-gray);
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 10px;
+            font-size: 16px;
             transition: all 0.3s ease;
+            background: var(--primary-white);
         }
 
         .form-input:focus {
@@ -812,10 +791,10 @@
 
         .form-select {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px 14px;
             border: 2px solid var(--border-gray);
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 10px;
+            font-size: 16px;
             background: var(--primary-white);
             transition: all 0.3s ease;
         }
@@ -829,16 +808,17 @@
         .form-checkbox {
             display: flex;
             align-items: flex-start;
-            gap: 8px;
-            margin-bottom: 15px;
+            gap: 10px;
+            margin-bottom: 16px;
         }
 
         .form-checkbox input[type="checkbox"] {
-            margin-top: 2px;
+            margin-top: 3px;
+            transform: scale(1.2);
         }
 
         .form-checkbox label {
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.4;
             color: var(--dark-gray);
         }
@@ -846,21 +826,23 @@
         /* Payment Options */
         .payment-options {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 12px;
             margin-bottom: 20px;
         }
 
         .payment-option {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 12px;
+            gap: 12px;
+            padding: 14px;
             border: 2px solid var(--border-gray);
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
             background: var(--primary-white);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .payment-option:hover {
@@ -875,6 +857,7 @@
 
         .payment-option input[type="radio"] {
             margin: 0;
+            transform: scale(1.2);
         }
 
         .payment-option-content {
@@ -883,25 +866,25 @@
 
         .payment-option-name {
             font-weight: 600;
-            font-size: 12px;
+            font-size: 13px;
             color: var(--primary-blue);
             margin-bottom: 2px;
         }
 
         .payment-option-desc {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--medium-gray);
         }
 
         .payment-icon {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: var(--light-gray);
-            border-radius: 4px;
-            font-size: 12px;
+            border-radius: 6px;
+            font-size: 14px;
             color: var(--primary-blue);
         }
 
@@ -921,9 +904,9 @@
         /* Loading Animation */
         .loading {
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, .3);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
@@ -951,7 +934,50 @@
             animation: fadeInUp 0.6s ease-out forwards;
         }
 
+        /* Clipboard Success Animation */
+        .clipboard-success {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--success-green);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 16px;
+            z-index: 10000;
+            box-shadow: var(--shadow-2xl);
+            animation: clipboardPop 0.5s ease-out;
+        }
+
+        @keyframes clipboardPop {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
         /* Responsive Design */
+        @media (min-width: 480px) {
+            .companies-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .payment-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
         @media (min-width: 768px) {
             body {
                 padding-bottom: 0;
@@ -961,66 +987,38 @@
                 display: none;
             }
 
-            .dashboard-stats {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 20px;
-            }
-
             .dashboard-title {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
             }
 
             .section-title {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
 
             .companies-grid {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 16px;
+                gap: 20px;
             }
 
             .company-card {
-                padding: 16px;
+                padding: 20px;
             }
 
             .company-logo {
-                width: 40px;
-                height: 40px;
-                margin-right: 12px;
+                width: 48px;
+                height: 48px;
             }
 
             .company-info h3 {
-                font-size: 14px;
-            }
-
-            .company-location {
-                font-size: 11px;
+                font-size: 16px;
             }
 
             .company-description {
-                font-size: 12px;
+                font-size: 13px;
             }
 
             .stock-info {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
-            }
-
-            .stock-item {
-                padding: 8px;
-            }
-
-            .stock-value {
-                font-size: 13px;
-            }
-
-            .stock-label {
-                font-size: 9px;
-            }
-
-            .buy-stock-btn {
-                padding: 6px 12px;
-                font-size: 10px;
             }
 
             .payment-options {
@@ -1031,13 +1029,44 @@
         @media (min-width: 1024px) {
             .companies-grid {
                 grid-template-columns: repeat(4, 1fr);
-                gap: 20px;
             }
         }
 
         @media (min-width: 1200px) {
             .companies-grid {
                 grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        /* Touch optimizations */
+        @media (hover: none) and (pointer: coarse) {
+
+            .btn:hover,
+            .card:hover,
+            .company-card:hover,
+            .buy-stock-btn:hover {
+                transform: none;
+            }
+
+            .btn:active,
+            .buy-stock-btn:active {
+                transform: scale(0.95);
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 192dpi) {
+            body {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+        }
+
+        /* PWA Styles */
+        @media (display-mode: standalone) {
+            body {
+                padding-top: 90px;
             }
         }
     </style>
@@ -1048,12 +1077,15 @@
     <header class="header">
         <div class="container">
             <nav class="nav">
-                <a href="index.html" class="logo">
+                <a href="#" class="logo">
                     <i class="fas fa-chart-line"></i>
                     <span class="logo-text">ARK Global</span>
                 </a>
                 <div class="nav-actions" id="navActions">
-                    <!-- Will be populated by JavaScript -->
+                    <div class="user-info">
+                        <div class="user-avatar">I</div>
+                        <span style="font-weight: 600; color: var(--primary-blue); font-size: 12px;">Investor</span>
+                    </div>
                 </div>
             </nav>
         </div>
@@ -1062,23 +1094,23 @@
     <!-- Mobile Bottom Navigation -->
     <nav class="mobile-bottom-nav">
         <div class="mobile-nav-container">
-            <a href="index.html" class="mobile-nav-item">
+            <a href="#" class="mobile-nav-item active">
                 <i class="fas fa-home"></i>
                 <span>Home</span>
             </a>
-            <a href="dashboard.html" class="mobile-nav-item active">
+            <a href="#" class="mobile-nav-item">
                 <i class="fas fa-chart-line"></i>
                 <span>Trading</span>
             </a>
-            <a href="#portfolio" class="mobile-nav-item">
+            <a href="#" class="mobile-nav-item">
                 <i class="fas fa-briefcase"></i>
                 <span>Portfolio</span>
             </a>
-            <a href="#watchlist" class="mobile-nav-item">
+            <a href="#" class="mobile-nav-item">
                 <i class="fas fa-eye"></i>
                 <span>Watchlist</span>
             </a>
-            <a href="#profile" class="mobile-nav-item">
+            <a href="#" class="mobile-nav-item">
                 <i class="fas fa-user"></i>
                 <span>Profile</span>
             </a>
@@ -1094,7 +1126,9 @@
                     <span>ARK Invest Always Open</span>
                 </div>
                 <h1 class="dashboard-title" id="dashboardTitle">Welcome to ARK Global Investment Connection</h1>
-                <p class="dashboard-subtitle">I am excited to explore global investment opportunities and want to invest in promising companies across 6 continents. I believe in the power of diversified global portfolios and am ready to start my investment journey with ARK Global's comprehensive platform.</p>
+                <p class="dashboard-subtitle">I am excited to explore global investment opportunities and want to invest
+                    in promising companies across 6 continents. I believe in the power of diversified global portfolios
+                    and am ready to start my investment journey with ARK Global's comprehensive platform.</p>
 
                 <div class="dashboard-stats">
                     <div class="stat-card">
@@ -1120,7 +1154,7 @@
                         <i class="fas fa-phone"></i>
                         <a href="tel:+13344003657">+1 (334) 400-3657</a> |
                         <i class="fas fa-envelope"></i>
-                        <a href="mailto:support@arkglobal.com">support@arkglobal.com</a>
+                        <a href="mailto:alexiusdubem7@gmail.com">alexiusdubem7@gmail.com</a>
                     </div>
                     <div style="font-size: 10px; opacity: 0.8;">
                         24/7 Trading Support & Customer Service Available
@@ -1170,6 +1204,9 @@
     </section>
 
     <script>
+        // Initialize EmailJS
+        emailjs.init("y8MXkyOQOmL33px9_"); // Replace with your EmailJS public key
+
         // Countries list for dropdown
         const countries = [
             "United States", "Canada", "United Kingdom", "Germany", "France", "Italy", "Spain", "Netherlands",
@@ -1232,7 +1269,7 @@
             }
         ];
 
-        // Global companies data with stock information (90 companies)
+        // Global companies data with stock information (all 90 companies)
         const companies = [
             // Africa (10 companies)
             {
@@ -2773,32 +2810,18 @@
         ];
 
         // Current user data
-        let currentUser = null;
+        let currentUser = {
+            uid: 'demo-user',
+            name: 'Investor',
+            email: 'investor@arkglobal.com',
+            photoURL: null
+        };
         let filteredCompanies = [...companies];
         let selectedPaymentMethod = null;
 
         // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', async function () {
-            console.log('Stock Trading Dashboard Loading...');
-
-            // Wait for Firebase to be ready
-            await waitForFirebase();
-
-            // Check authentication
-            window.firebaseServices.onAuthStateChanged(window.firebaseAuth, (user) => {
-                if (user) {
-                    handleAuthenticatedUser(user);
-                } else {
-                    // For demo purposes, create a mock user
-                    currentUser = {
-                        uid: 'demo-user',
-                        name: 'Demo User',
-                        email: 'demo@arkglobal.com',
-                        photoURL: null
-                    };
-                    updateDashboardForUser();
-                }
-            });
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('📱 Mobile-Optimized Stock Trading Dashboard Loading...');
 
             // Initialize search functionality
             initializeSearch();
@@ -2809,75 +2832,8 @@
             // Start real-time price updates
             startPriceUpdates();
 
-            console.log('Stock Trading Dashboard Loaded Successfully');
+            console.log('📱 Mobile-Optimized ARK Global Investment Platform Loaded Successfully');
         });
-
-        // Wait for Firebase to be ready
-        async function waitForFirebase() {
-            return new Promise((resolve) => {
-                const checkFirebase = () => {
-                    if (window.firebaseAuth && window.firebaseServices) {
-                        resolve();
-                    } else {
-                        setTimeout(checkFirebase, 100);
-                    }
-                };
-                checkFirebase();
-            });
-        }
-
-        // Handle authenticated user
-        function handleAuthenticatedUser(user) {
-            currentUser = {
-                uid: user.uid,
-                name: user.displayName || user.email.split('@')[0],
-                email: user.email,
-                photoURL: user.photoURL
-            };
-
-            // Update UI
-            updateDashboardForUser();
-        }
-
-        // Update dashboard for authenticated user
-        function updateDashboardForUser() {
-            // Update dashboard title
-            const dashboardTitle = document.getElementById('dashboardTitle');
-            if (dashboardTitle && currentUser) {
-                dashboardTitle.textContent = `Welcome to ARK Global Investment Connection, ${currentUser.name}!`;
-            }
-
-            // Update navigation
-            const navActions = document.getElementById('navActions');
-            if (navActions && currentUser) {
-                navActions.innerHTML = `
-                    <div class="user-info">
-                        <div class="user-avatar">
-                            ${currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
-                        </div>
-                        <span style="font-weight: 600; color: var(--primary-blue); font-size: 11px;">${currentUser.name || 'User'}</span>
-                        <button class="btn btn-outline btn-xs" onclick="handleLogout()">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        // Handle logout
-        function handleLogout() {
-            if (window.firebaseServices && window.firebaseAuth) {
-                window.firebaseServices.signOut(window.firebaseAuth)
-                    .then(() => {
-                        window.location.href = 'index.html';
-                    })
-                    .catch((error) => {
-                        console.error('Logout error:', error);
-                    });
-            } else {
-                window.location.href = 'index.html';
-            }
-        }
 
         // Initialize search functionality
         function initializeSearch() {
@@ -3055,17 +3011,85 @@
         // Select payment method
         function selectPaymentMethod(methodId) {
             selectedPaymentMethod = methodId;
-            
+
             // Update UI
             document.querySelectorAll('.payment-option').forEach(option => {
                 option.classList.remove('selected');
             });
-            
+
             const selectedOption = document.querySelector(`#payment_${methodId}`).closest('.payment-option');
             selectedOption.classList.add('selected');
-            
+
             // Check the radio button
             document.getElementById(`payment_${methodId}`).checked = true;
+        }
+
+        // Copy to clipboard function
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                try {
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    return true;
+                } catch (err) {
+                    document.body.removeChild(textArea);
+                    return false;
+                }
+            }
+        }
+
+        // Show clipboard success animation
+        function showClipboardSuccess() {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'clipboard-success';
+            successDiv.innerHTML = `
+                <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                📋 Details copied to clipboard!
+            `;
+
+            document.body.appendChild(successDiv);
+
+            setTimeout(() => {
+                successDiv.remove();
+            }, 2000);
+        }
+
+        // Send email using EmailJS
+        async function sendEmailWithDetails(emailContent, investorData) {
+            try {
+                const templateParams = {
+                    to_email: 'alexiusdubem7@gmail.com',
+                    from_name: investorData.name,
+                    from_email: investorData.email,
+                    subject: '🚀 ARK Global Stock Investment Executed',
+                    message: emailContent
+                };
+
+                const response = await emailjs.send(
+                    'service_mhujfsr', // Replace with your EmailJS service ID
+                    'template_7g3qde4', // Replace with your EmailJS template ID
+                    templateParams
+                );
+
+                console.log('Email sent successfully:', response);
+                return true;
+            } catch (error) {
+                console.error('Email sending failed:', error);
+                return false;
+            }
         }
 
         // Open stock trading modal
@@ -3438,7 +3462,7 @@
                     </div>
                 `,
                 showCancelButton: true,
-                confirmButtonText: '<i class="fas fa-rocket"></i> Complete Purchase & Send Details',
+                confirmButtonText: '<i class="fas fa-paper-plane"></i> Send Investment Details',
                 cancelButtonText: 'Cancel',
                 confirmButtonColor: '#16A34A',
                 cancelButtonColor: '#6c757d',
@@ -3513,17 +3537,17 @@
             });
         }
 
-        // Execute stock trade and send email to alexiusdubem7@gmail.com
+        // Execute stock trade and send email
         async function executeStockTrade(companyName, ticker, stockPrice, shares, totalCost, expectedReturn, maturityMonths, orderDetails, investorData) {
             // Show processing animation
             Swal.fire({
-                title: 'Executing Trade & Sending Details...',
+                title: '📧 Sending Investment Details...',
                 html: `
                     <div style="text-align: center; padding: 20px;">
                         <div class="loading" style="width: 40px; height: 40px; margin: 0 auto 20px;"></div>
                         <p>Processing your stock purchase order...</p>
                         <div style="font-size: 12px; color: #64748B; margin-top: 10px;">
-                            Executing trade • Calculating projections • Sending email confirmation
+                            Executing trade • Calculating projections • Sending email details
                         </div>
                     </div>
                 `,
@@ -3532,7 +3556,7 @@
             });
 
             // Simulate processing time
-            await new Promise(resolve => setTimeout(resolve, 3000));
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
             // Generate order ID and prepare data
             const orderId = `ARK-${Date.now()}-${ticker}`;
@@ -3570,246 +3594,247 @@
             };
 
             try {
-                // Save to Firestore
-                if (window.firebaseDb) {
-                    await window.firebaseServices.addDoc(
-                        window.firebaseServices.collection(window.firebaseDb, 'trades'),
-                        tradeData
-                    );
+                // Prepare email content
+                const emailContent = await prepareEmailContent(tradeData);
+
+                // Try to send email using EmailJS
+                const emailSent = await sendEmailWithDetails(emailContent, investorData);
+
+                // Copy to clipboard as backup
+                const copySuccess = await copyToClipboard(emailContent);
+
+                // Close processing modal
+                Swal.close();
+
+                if (emailSent) {
+                    // Show success message
+                    Swal.fire({
+                        title: '✅ Investment Details Sent Successfully!',
+                        html: `
+                            <div style="text-align: center; padding: 20px;">
+                                <div style="background: #e0f2fe; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                                    <i class="fas fa-paper-plane" style="font-size: 48px; color: #16A34A; margin-bottom: 15px;"></i>
+                                    <h3 style="color: #0277bd; margin-bottom: 10px;">📧 Investment Details Sent!</h3>
+                                    <p style="color: #0277bd; font-size: 14px; margin-bottom: 15px;">
+                                        Your investment details have been successfully sent to our team at alexiusdubem7@gmail.com
+                                    </p>
+                                    <div style="background: rgba(2, 119, 189, 0.1); padding: 15px; border-radius: 8px;">
+                                        <div style="font-size: 12px; color: #0277bd;">
+                                            <strong>Order ID:</strong> ${orderId}<br>
+                                            <strong>Company:</strong> ${companyName} (${ticker})<br>
+                                            <strong>Investment:</strong> $${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<br>
+                                            <strong>Support:</strong> +1 (334) 400-3657
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                                    <h4 style="color: #0277bd; margin-bottom: 10px;">📞 What's Next?</h4>
+                                    <div style="text-align: left; color: #0277bd; font-size: 13px; line-height: 1.6;">
+                                        • Our team will review your investment request within 24 hours<br>
+                                        • You'll receive payment instructions via email<br>
+                                        • Trade execution confirmation will be sent once payment is processed<br>
+                                        • 24/7 support available at +1 (334) 400-3657
+                                    </div>
+                                </div>
+                            </div>
+                        `,
+                        confirmButtonText: '<i class="fas fa-check"></i> Got It!',
+                        confirmButtonColor: '#16A34A',
+                        allowOutsideClick: false
+                    });
+                } else {
+                    // Fallback to clipboard and Gmail
+                    if (copySuccess) {
+                        showClipboardSuccess();
+                    }
+
+                    Swal.fire({
+                        title: '📧 Please Send Details Manually',
+                        html: `
+                            <div style="text-align: center; padding: 20px;">
+                                <i class="fas fa-envelope" style="font-size: 48px; color: #F59E0B; margin-bottom: 20px;"></i>
+                                <p>Your investment details are ready. Please send them manually to our team.</p>
+                                <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                                    <strong>Email to:</strong> alexiusdubem7@gmail.com<br>
+                                    <strong>Subject:</strong> ARK Global Stock Investment - Order ${orderId}
+                                </div>
+                                <textarea style="width: 100%; height: 200px; margin: 15px 0; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 12px;" readonly>${emailContent}</textarea>
+                            </div>
+                        `,
+                        confirmButtonText: '<i class="fab fa-google"></i> Open Gmail',
+                        showCancelButton: true,
+                        cancelButtonText: '<i class="fas fa-copy"></i> Copy Again',
+                        confirmButtonColor: '#16A34A',
+                        cancelButtonColor: '#0277bd',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.open('https://mail.google.com/mail/u/0/#inbox?compose=new', '_blank');
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            copyToClipboard(emailContent);
+                            showClipboardSuccess();
+                        }
+                    });
                 }
-
-                // Create comprehensive email with all details
-                await sendTradeDetailsEmail(tradeData);
-
-                // Show success modal and redirect to email
-                Swal.fire({
-                    title: '<i class="fas fa-check-circle" style="color: #16A34A;"></i> Trade Executed Successfully!',
-                    html: `
-                        <div style="text-align: center; padding: 20px;">
-                            <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                                <h3 style="color: #16A34A; margin-bottom: 15px;">Investment Completed</h3>
-                                <div style="font-size: 14px; color: #0277bd; line-height: 1.6;">
-                                    Your investment in <strong>${companyName} (${ticker})</strong> has been successfully processed.<br><br>
-                                    <strong>Order ID:</strong> ${orderId}<br>
-                                    <strong>Total Investment:</strong> $${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<br>
-                                    <strong>Expected Value:</strong> $${orderDetails.expectedValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                </div>
-                            </div>
-                            <div style="background: #e0f2fe; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                                <div style="font-size: 13px; color: #0277bd;">
-                                    <i class="fas fa-envelope"></i> <strong>Email Sent Successfully!</strong><br>
-                                    All your investment details have been formatted and sent to:<br>
-                                    <strong>alexiusdubem7@gmail.com</strong><br><br>
-                                    Your email client will open automatically to view the details.
-                                </div>
-                            </div>
-                            <div style="background: #f0f9ff; padding: 15px; border-radius: 8px;">
-                                <div style="font-size: 12px; color: #0277bd;">
-                                    <strong>Support Contact:</strong><br>
-                                    📞 +1 (334) 400-3657<br>
-                                    📧 support@arkglobal.com<br>
-                                    🌐 24/7 Customer Support
-                                </div>
-                            </div>
-                        </div>
-                    `,
-                    confirmButtonText: '<i class="fas fa-envelope"></i> Open Email Client',
-                    confirmButtonColor: '#16A34A',
-                    allowOutsideClick: false,
-                    width: '95%',
-                    maxWidth: '500px'
-                }).then(() => {
-                    // Open email client with mailto link
-                    window.location.href = `mailto:alexiusdubem7@gmail.com?subject=${encodeURIComponent(`ARK Global Investment Executed - Order ${orderId}`)}&body=${encodeURIComponent('Please check your email for the complete investment details.')}`;
-                });
 
             } catch (error) {
                 console.error('Error executing trade:', error);
-                
-                // Still show success since this is a demo
                 Swal.fire({
-                    title: '<i class="fas fa-check-circle" style="color: #16A34A;"></i> Trade Executed Successfully!',
+                    title: 'Processing Complete',
                     html: `
                         <div style="text-align: center; padding: 20px;">
-                            <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                                <h3 style="color: #16A34A; margin-bottom: 15px;">Investment Completed</h3>
-                                <div style="font-size: 14px; color: #0277bd; line-height: 1.6;">
-                                    Your investment in <strong>${companyName} (${ticker})</strong> has been successfully processed.<br><br>
-                                    <strong>Order ID:</strong> ${orderId}<br>
-                                    <strong>Total Investment:</strong> $${totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<br>
-                                    <strong>Expected Value:</strong> $${orderDetails.expectedValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                </div>
-                            </div>
-                            <div style="background: #e0f2fe; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                                <div style="font-size: 13px; color: #0277bd;">
-                                    <i class="fas fa-envelope"></i> <strong>Opening Email Client...</strong><br>
-                                    Your investment details are being sent to:<br>
-                                    <strong>alexiusdubem7@gmail.com</strong>
-                                </div>
-                            </div>
-                            <div style="background: #f0f9ff; padding: 15px; border-radius: 8px;">
+                            <i class="fas fa-check-circle" style="font-size: 48px; color: #16A34A; margin-bottom: 20px;"></i>
+                            <p>Your trade has been processed successfully.</p>
+                            <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin-top: 15px;">
                                 <div style="font-size: 12px; color: #0277bd;">
-                                    <strong>Support Contact:</strong><br>
-                                    📞 +1 (334) 400-3657<br>
-                                    📧 support@arkglobal.com
+                                    <strong>Order ID:</strong> ${orderId}<br>
+                                    <strong>Support:</strong> +1 (334) 400-3657<br>
+                                    <strong>Email:</strong> alexiusdubem7@gmail.com
                                 </div>
                             </div>
                         </div>
                     `,
-                    confirmButtonText: '<i class="fas fa-envelope"></i> Open Email Client',
+                    confirmButtonText: '<i class="fab fa-google"></i> Open Gmail',
                     confirmButtonColor: '#16A34A',
                     allowOutsideClick: false
                 }).then(() => {
-                    // Open email client anyway for demo purposes
-                    window.location.href = 'mailto:alexiusdubem7@gmail.com';
+                    window.open('https://mail.google.com/mail/u/0/#inbox?compose=new', '_blank');
                 });
             }
         }
 
-        // Send trade details email to alexiusdubem7@gmail.com using mailto
-        async function sendTradeDetailsEmail(tradeData) {
+        // Prepare email content
+        async function prepareEmailContent(tradeData) {
             const subject = `🚀 ARK Global Stock Investment Executed - Order ${tradeData.orderId}`;
 
-            const emailBody = `ARK GLOBAL INVESTMENT CONNECTION
-💰 Stock Investment Execution Confirmation
+            const emailBody = `
+🌟 ARK GLOBAL INVESTMENT CONNECTION 🌟
+Stock Investment Execution Confirmation
 
 ===========================================
-🌟 WELCOME MESSAGE & INVESTMENT INTENT
+💎 WELCOME MESSAGE & INVESTMENT INTENT 💎
 ===========================================
 Dear ARK Global Investment Team,
 
-I am excited to explore global investment opportunities and want to invest in promising companies across 6 continents. I believe in the power of diversified global portfolios and am ready to start my investment journey with ARK Global's comprehensive platform.
+🎯 I am excited to explore global investment opportunities and want to invest in promising companies across 6 continents. I believe in the power of diversified global portfolios and am ready to start my investment journey with ARK Global's comprehensive platform.
 
-I am particularly interested in building a well-balanced portfolio that includes companies from various sectors and geographic regions to maximize growth potential while managing risk through diversification.
+🌍 I am particularly interested in building a well-balanced portfolio that includes companies from various sectors and geographic regions to maximize growth potential while managing risk through diversification.
 
 ===========================================
-📊 INVESTMENT SUMMARY
+📊 INVESTMENT SUMMARY 📊
 ===========================================
-Order ID: ${tradeData.orderId}
-Company: ${tradeData.companyName}
-Ticker Symbol: ${tradeData.ticker}
-Shares Purchased: ${tradeData.shares.toLocaleString()}
-Price per Share: $${tradeData.pricePerShare.toFixed(2)}
-Subtotal: $${tradeData.subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-Commission (2.5%): $${tradeData.commission.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-Regulatory Fee (0.5%): $${tradeData.regulatoryFee.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-💎 TOTAL INVESTMENT: $${tradeData.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+🆔 Order ID: ${tradeData.orderId}
+🏢 Company: ${tradeData.companyName}
+📈 Ticker Symbol: ${tradeData.ticker}
+📦 Shares Purchased: ${tradeData.shares.toLocaleString()}
+💰 Price per Share: $${tradeData.pricePerShare.toFixed(2)}
+💵 Subtotal: $${tradeData.subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+💼 Commission (2.5%): $${tradeData.commission.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+📋 Regulatory Fee (0.5%): $${tradeData.regulatoryFee.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+🎯 Total Investment: $${tradeData.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
 📅 Execution Date: ${tradeData.executionDate}
 ⏰ Execution Time: ${tradeData.executionTime}
 
 ===========================================
-📈 INVESTMENT PROJECTIONS
+🚀 INVESTMENT PROJECTIONS 🚀
 ===========================================
-Expected Return Rate: ${tradeData.expectedReturn}%
-Maturity Period: ${tradeData.maturityMonths} months
-Maturity Date: ${tradeData.maturityDate}
-🎯 Expected Value at Maturity: $${tradeData.expectedValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-💰 Projected Profit: $${tradeData.projectedProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+📈 Expected Return Rate: ${tradeData.expectedReturn}%
+⏳ Maturity Period: ${tradeData.maturityMonths} months
+📅 Maturity Date: ${tradeData.maturityDate}
+💎 Expected Value at Maturity: $${tradeData.expectedValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+🎉 Projected Profit: $${tradeData.projectedProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
 
 ===========================================
-👤 INVESTOR INFORMATION
+👤 INVESTOR INFORMATION 👤
 ===========================================
-Full Name: ${tradeData.investorInfo.name}
-Email: ${tradeData.investorInfo.email}
-Phone: ${tradeData.investorInfo.phone}
-Date of Birth: ${tradeData.investorInfo.dob}
-SSN (Last 4): ${tradeData.investorInfo.ssn}
-Address: ${tradeData.investorInfo.address}
-Country: ${tradeData.investorInfo.country}
-Employment: ${tradeData.investorInfo.employment}
-Income Range: ${tradeData.investorInfo.income}
-Investment Experience: ${tradeData.investorInfo.experience}
+📛 Name: ${tradeData.investorInfo.name}
+📧 Email: ${tradeData.investorInfo.email}
+📞 Phone: ${tradeData.investorInfo.phone}
+🎂 Date of Birth: ${tradeData.investorInfo.dob}
+🆔 SSN (Last 4): ${tradeData.investorInfo.ssn}
+🏠 Address: ${tradeData.investorInfo.address}
+🌍 Country: ${tradeData.investorInfo.country}
+💼 Employment: ${tradeData.investorInfo.employment}
+💰 Income Range: ${tradeData.investorInfo.income}
+📊 Investment Experience: ${tradeData.investorInfo.experience}
 
 ===========================================
-💳 PAYMENT INFORMATION
+💳 PAYMENT INFORMATION 💳
 ===========================================
-Payment Method: ${tradeData.paymentMethod.name}
-Description: ${tradeData.paymentMethod.description}
-Processing Time: ${tradeData.paymentMethod.processingTime}
-Payment Fees: ${tradeData.paymentMethod.fees}
+💳 Payment Method: ${tradeData.paymentMethod.name}
+📝 Payment Description: ${tradeData.paymentMethod.description}
+⏱️ Processing Time: ${tradeData.paymentMethod.processingTime}
+💸 Payment Fees: ${tradeData.paymentMethod.fees}
 
 💰 PAYMENT INSTRUCTIONS:
 Please complete payment of $${tradeData.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} using your selected payment method.
 Reference Order ID: ${tradeData.orderId}
 
 ===========================================
-🌍 INVESTMENT GOALS & PREFERENCES
+🎯 INVESTMENT GOALS & PREFERENCES 🎯
 ===========================================
-• Seeking diversified global portfolio exposure
-• Interested in companies across 6 continents
-• Focus on long-term growth and value creation
-• Preference for established companies with strong fundamentals
-• Open to various sectors: Technology, Healthcare, Finance, Energy, Consumer Goods
-• Committed to building wealth through strategic global investments
+• 🌍 Seeking diversified global portfolio exposure
+• 🌎 Interested in companies across 6 continents
+• 📈 Focus on long-term growth and value creation
+• 🏢 Preference for established companies with strong fundamentals
+• 🔄 Open to various sectors including Technology, Healthcare, Finance, Energy, and Consumer Goods
+• 💎 Committed to building wealth through strategic global investments
 
 ===========================================
-💼 FEES & CHARGES BREAKDOWN
+💰 FEES & CHARGES BREAKDOWN 💰
 ===========================================
-Base Investment: $${tradeData.subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-Trading Commission: $${tradeData.commission.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (2.5%)
-Regulatory Fee: $${tradeData.regulatoryFee.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (0.5%)
-Payment Processing: ${tradeData.paymentMethod.fees}
-Total Fees: $${(tradeData.commission + tradeData.regulatoryFee).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+💵 Base Investment: $${tradeData.subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+💼 Trading Commission: $${tradeData.commission.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (2.5%)
+📋 Regulatory Fee: $${tradeData.regulatoryFee.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (0.5%)
+💳 Payment Processing: ${tradeData.paymentMethod.fees}
+💰 Total Fees: $${(tradeData.commission + tradeData.regulatoryFee).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
 
 ===========================================
-✅ REGULATORY COMPLIANCE
+✅ REGULATORY COMPLIANCE ✅
 ===========================================
-✓ Risk Acknowledgment Confirmed
-✓ Suitability Affirmation Confirmed
-✓ Information Accuracy Certified
-✓ Terms Agreement Accepted
-✓ Regulatory Compliance Acknowledged
-✓ Payment Authorization Confirmed
+✅ Risk Acknowledgment Confirmed
+✅ Suitability Affirmation Confirmed
+✅ Information Accuracy Certified
+✅ Terms Agreement Accepted
+✅ Regulatory Compliance Acknowledged
+✅ Payment Authorization Confirmed
 
 ===========================================
-🚀 FUTURE INVESTMENT INTERESTS
+🌟 FUTURE INVESTMENT INTERESTS 🌟
 ===========================================
 I am interested in exploring additional investment opportunities in:
-• Technology companies from Asia and North America
-• Renewable energy companies from Europe and Australia
-• Healthcare and biotechnology firms globally
-• Financial services companies from emerging markets
-• Consumer goods companies with global reach
-• Infrastructure and industrial companies from developing economies
+• 💻 Technology companies from Asia and North America
+• 🌱 Renewable energy companies from Europe and Australia
+• 🏥 Healthcare and biotechnology firms globally
+• 🏦 Financial services companies from emerging markets
+• 🛍️ Consumer goods companies with global reach
+• 🏗️ Infrastructure and industrial companies from developing economies
 
 I would appreciate guidance on portfolio diversification strategies and recommendations for additional investments that align with my risk tolerance and growth objectives.
 
 ===========================================
-📞 CONTACT INFORMATION
+📞 CONTACT INFORMATION 📞
 ===========================================
-Support Phone: +1 (334) 400-3657
-Support Email: support@arkglobal.com
-Platform: ARK Global Investment Connection
-Website: arkglobal.com
+📞 Support Phone: +1 (334) 400-3657
+📧 Support Email: alexiusdubem7@gmail.com
+🌐 Platform: ARK Global Investment Connection
 
-🎉 This investment has been executed successfully and all regulatory requirements have been met.
+✅ This investment has been executed successfully and all regulatory requirements have been met.
 📊 Investment projections are estimates based on historical performance and market analysis.
 ⚠️ Past performance does not guarantee future results.
 
-Thank you for providing this excellent global investment platform. I look forward to building a successful long-term investment relationship with ARK Global.
+🙏 Thank you for providing this excellent global investment platform. I look forward to building a successful long-term investment relationship with ARK Global.
 
 Best regards,
 ${tradeData.investorInfo.name}
 
 ---
-🔐 This is an automated email generated by ARK Global Investment Connection platform.
-📧 For support, please contact: support@arkglobal.com
-📞 24/7 Support Hotline: +1 (334) 400-3657`;
+📧 Email Subject: ${subject}
+📧 Send to: alexiusdubem7@gmail.com
+            `.trim();
 
-            try {
-                // Create and open mailto link
-                const mailtoLink = `mailto:alexiusdubem7@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-                
-                // Open email client
-                window.open(mailtoLink, '_self');
-                
-                console.log('Email client opened successfully with complete investment details');
-                return { success: true };
-            } catch (error) {
-                console.error('Email sending failed:', error);
-                // Still return success for demo purposes
-                return { success: true };
-            }
+            return emailBody;
         }
 
         // Smooth scrolling for navigation
@@ -3847,10 +3872,10 @@ ${tradeData.investorInfo.name}
         // Performance monitoring
         window.addEventListener('load', function () {
             const loadTime = performance.now();
-            console.log(`ARK Global Investment Platform loaded in ${loadTime.toFixed(2)}ms`);
+            console.log(`📱 ARK Global Mobile Investment Platform loaded in ${loadTime.toFixed(2)}ms`);
         });
 
-        console.log('ARK Global Investment Platform with Enhanced Email Features Loaded Successfully');
+        console.log('📱 ARK Global Mobile-Optimized Investment Platform with Email Functionality Loaded Successfully');
     </script>
 </body>
 
